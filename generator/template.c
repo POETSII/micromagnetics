@@ -40,21 +40,21 @@
 #define MOUSTACHE_CLOSE_CODE 125  /* '}' */
 #define MOUSTACHE_BUFFER_SIZE 1000
 
-int template(char*, char*);
+int template(FILE*, FILE*);
 
-/* This function performs templating on the file at "in", and writes it to a
- * file at "out". Both character arrays must be null-terminated.
+/* This function performs templating on the file at "inFile", and writes it to
+ * file at "outFile". Both character arrays must be null-terminated.
  *
- * If there are no moustaches in the file at "in", the file is simply copied to
- * "out".
+ * If there are no moustaches in the file at "inFile", the file is simply
+ * copied to "outFile".
+ *
+ * inFile must be opened in read-binary mode, and outFile must be opened in
+ * write-binary mode for this to work as intended (but by all means play
+ * around).
  *
  * Returns 0 if no errors occured, and 1 otherwise. */
-int template(char* inPath, char* outPath)
+int template(FILE* inFile, FILE* outFile)
 {
-    /* Files */
-    FILE* inFile;
-    FILE* outFile;
-
     /* Characters */
     int thisChar;
     int previousChar;
@@ -71,22 +71,6 @@ int template(char* inPath, char* outPath)
     moustacheIndex = 0;
     moustacheMode = 0;
     error = 0;
-
-    /* Open the input and output files. */
-    inFile = fopen(inPath, "rb+");
-    if (inFile == NULL)
-    {
-        fprintf(stderr, "Error opening input file '%s'.\n", inPath);
-        return 1;
-    }
-
-    outFile = fopen(outPath, "wb");
-    if (outFile == NULL)
-    {
-        fprintf(stderr, "Error opening output file '%s'.\n", outPath);
-        fclose(inFile);
-        return 1;
-    }
 
     /* Read until we hit EOF in the input file. */
     thisChar = fgetc(inFile);
@@ -137,8 +121,7 @@ int template(char* inPath, char* outPath)
             {
                 if (fputc(thisChar, outFile) == EOF)
                 {
-                    fprintf(stderr, "Error writing to output file '%s'.\n",
-                            outPath);
+                    fprintf(stderr, "Error writing to output file.\n");
                     error = 1;
                     break;
                 }
@@ -150,14 +133,35 @@ int template(char* inPath, char* outPath)
         thisChar = fgetc(inFile);
     }
 
-    /* Cleanup. */
-    fclose(inFile);
-    fclose(outFile);
-
     return error;
 }
 
 int main(int argc, char** argv)
 {
-    return template(argv[1], argv[2]);
+    FILE* inFile;
+    FILE* outFile;
+    int rc;
+
+    /* Open the input and output files. */
+    inFile = fopen(argv[1], "rb+");
+    if (inFile == NULL)
+    {
+        fprintf(stderr, "Error opening input file '%s'.\n", argv[1]);
+        return 1;
+    }
+
+    outFile = fopen(argv[2], "wb");
+    if (outFile == NULL)
+    {
+        fprintf(stderr, "Error opening output file '%s'.\n", argv[2]);
+        fclose(inFile);
+        return 1;
+    }
+
+    rc = template(inFile, outFile);
+
+    /* Cleanup. */
+    fclose(inFile);
+    fclose(outFile);
+    return rc;
 }
