@@ -42,7 +42,7 @@
 #define MOUSTACHE_CLOSE_CODE 125  /* '}' */
 #define MOUSTACHE_BUFFER_SIZE 1000
 
-int template(FILE*, FILE*);
+#include "template.h"
 
 /* This function performs templating on the file at "inFile", and writes it to
  * file at "outFile". Both character arrays must be null-terminated.
@@ -188,3 +188,7 @@ int main(int argc, char** argv)
     fclose(outFile);
     return rc;
 }
+
+#undef MOUSTACHE_OPEN_CODE
+#undef MOUSTACHE_CLOSE_CODE
+#undef MOUSTACHE_BUFFER_SIZE
