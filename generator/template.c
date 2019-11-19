@@ -34,7 +34,9 @@
  *
  * There's very little in here that protects the user, so be careful! */
 
+#include <errno.h>
 #include <stdio.h>
+#include <string.h>
 
 #define MOUSTACHE_OPEN_CODE 123  /* '{' */
 #define MOUSTACHE_CLOSE_CODE 125  /* '}' */
@@ -64,6 +66,9 @@ int template(FILE* inFile, FILE* outFile)
     char moustacheBuffer[MOUSTACHE_BUFFER_SIZE];
     int moustacheIndex;
 
+    /* For recursion */
+    FILE* middleFile;
+
     /* Reporting */
     int error;
 
@@ -84,12 +89,26 @@ int template(FILE* inFile, FILE* outFile)
             if (thisChar == MOUSTACHE_CLOSE_CODE &&
                 previousChar == MOUSTACHE_CLOSE_CODE)
             {
-                /* If so, exit moustache mode, remove the stray curly brace
-                 * from the buffer, and print the moustache buffer to
-                 * stdout. */
+                /* If so, exit moustache mode, and remove the stray curly brace
+                 * from the buffer. */
                 moustacheMode = 0;
-                moustacheBuffer[moustacheIndex - 1] = EOF;
-                printf("Found moustache: '%s'\n", moustacheBuffer);
+                moustacheBuffer[moustacheIndex - 1] = 0;
+
+                /* Recurse! */
+                middleFile = fopen(moustacheBuffer, "rb+");
+                if (middleFile == NULL)
+                {
+                    fprintf(stderr, "Error opening nested file '%s': %s.\n",
+                            moustacheBuffer, strerror(errno));
+                    error = 1;
+                    break;
+                }
+
+                if (template(middleFile, outFile) != 0)
+                {
+                    error = 1;
+                    break;
+                }
             }
 
             /* Otherwise, store the character in the moustache buffer. */
@@ -108,7 +127,7 @@ int template(FILE* inFile, FILE* outFile)
                 /* Clear the moustache buffer. */
                 for (moustacheIndex = 0;
                      moustacheIndex < MOUSTACHE_BUFFER_SIZE;
-                     moustacheBuffer[moustacheIndex++] = EOF);
+                     moustacheBuffer[moustacheIndex++] = 0);
                 moustacheIndex = 0;
 
                 /* If so, remove the previous curly brace by moving the write
@@ -146,14 +165,18 @@ int main(int argc, char** argv)
     inFile = fopen(argv[1], "rb+");
     if (inFile == NULL)
     {
-        fprintf(stderr, "Error opening input file '%s'.\n", argv[1]);
+        fprintf(stderr,
+                "Error opening input file '%s': %s.\n",
+                argv[1], strerror(errno));
         return 1;
     }
 
     outFile = fopen(argv[2], "wb");
     if (outFile == NULL)
     {
-        fprintf(stderr, "Error opening output file '%s'.\n", argv[2]);
+        fprintf(stderr,
+                "Error opening output file '%s': %s.\n",
+                argv[2], strerror(errno));
         fclose(inFile);
         return 1;
     }
