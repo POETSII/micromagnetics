@@ -2,7 +2,9 @@
 <!--
     This XML is a template that describes one-dimensional micromagnetic
     simulation. It is to be populated with a series of files found in moustache
-    brackets ("{{" and "}}", without quotes).
+    brackets (two sequent '{' characters, and two sequent '}' characters,
+    without quotes). The idea being that the generator populates fields in this
+    XML file with information, including:
 
      - Energy terms, and their governing coefficients.
      - Initial conditions.
