@@ -16,6 +16,7 @@
 <Graphs xmlns="https://poets-project.org/schemas/virtual-graph-schema-v2">
   <GraphType id="micromagnetic_simulation_1d">
     <MessageTypes>
+      <MessageType id="dummy"/> <!-- Used for dummy pin handlers. -->
       <MessageType id="state">
         <Message>
           <Scalar type="float" name="m_x0"/>
@@ -90,6 +91,18 @@
         <OnCompute><![CDATA[
 {{fd_point_on_compute.c}}
         ]]></OnCompute>
+
+        <!-- Here is a dummy input pin because people can't talk to each other,
+             so we have a bodge where, because the handler of the first input
+             pin is called on initialisation, we create a dummy.
+
+             Talk to GMB, who also says "just use the init handler". -->
+        <InputPin name="dummy" messageTypeId="dummy">
+          <OnReceive><![CDATA[
+/* I'm a dummy pin handler, and I'll never be called or used! Laziness is my
+ * ideal lifestyle, and I like walking in the rain. */
+          ]]></OnReceive>
+        </InputPin>
 
         <!-- Getting the word out to our neighbours. -->
         <OutputPin name="state_push" messageTypeId="state">
