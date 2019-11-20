@@ -40,12 +40,17 @@
 #define MOUSTACHE_CLOSE_CODE 125  /* '}', you'll need two of them */
 #define MOUSTACHE_BUFFER_SIZE 1000  /* Scream if you want to go faster! */
 
-/* Simple wrapper around template to handle file opening and closing. */
+/* Simple wrapper around template to handle file opening and closing. inPath
+ * and outPath may be string literal. */
 int template_files(char* inPath, char* outPath)
 {
+    /* File objects go here, one for each path provided. */
     FILE* inFile;
     FILE* outFile;
-    int rc;
+
+    char* inPathCopy;  /* For directory extraction */
+    char* dir;  /* Directory will go here */
+    int rc;  /* Returncode */
 
     /* Open the input and output files. */
     inFile = fopen(inPath, "rb+");
@@ -67,10 +72,18 @@ int template_files(char* inPath, char* outPath)
         return 1;
     }
 
+    /* Grab the directory containing the input file. If inPath is a string
+     * literal, we'll segmentation fault here, so copy the buffer somewhere we
+     * can  modify. POSIX! */
+    inPathCopy = (char*) malloc(sizeof(char*) * (strlen(inPath) + 1));
+    strcpy(inPathCopy, inPath);
+    dir = dirname(inPathCopy);
+
     /* Use templating engine. */
-    rc = template(inFile, outFile, dirname(inPath));
+    rc = template(inFile, outFile, dir);
 
     /* Cleanup. */
+    free(inPathCopy);
     fclose(inFile);
     fclose(outFile);
     return rc;
@@ -110,6 +123,7 @@ int template(FILE* inFile, FILE* outFile, char* dir)
     /* For recursion; this function calls itself to resolve nested
      * moustaches. */
     FILE* middleFile;
+    char* middleDir;
 
     /* Reporting (holds errno values) */
     int error;
@@ -145,9 +159,11 @@ int template(FILE* inFile, FILE* outFile, char* dir)
                     return errno;
                 }
 
+                /* Grab the directory. POSIX! */
+                middleDir = dirname(moustacheBuffer);
+
                 /* Recurse, propagating any errors. */
-                error = template(middleFile, outFile,
-                                 dirname(moustacheBuffer));
+                error = template(middleFile, outFile, middleDir);
                 fclose(middleFile);
                 if (error != 0) return error;
             }
