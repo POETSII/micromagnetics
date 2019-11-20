@@ -138,8 +138,11 @@
         ]]></Code>
         <InputPin name="exfiltrate" messageTypeId="exfiltration">
           <OnReceive><![CDATA[
-printf("%u\t%u\t%f\t%f\%f\n", message->x0, message->iteration,
-       message->m_x0, message->m_x1, message->m_x2);
+FILE* dataFile;
+dataFile = fopen("micromagnetics_1d_20_data.tsv", "a");
+fprintf(dataFile, "%u\t%u\t%f\t%f\t%f\n", message->x0, message->iteration,
+        message->m_x0, message->m_x1, message->m_x2);
+fclose(dataFile);
           ]]></OnReceive>
         </InputPin>
       </SupervisorDeviceType>
