@@ -1,2 +1,2 @@
-message->x0 = x0;
+message->x0 = deviceProperties->x0;
 {{populate_state_message.c}}
