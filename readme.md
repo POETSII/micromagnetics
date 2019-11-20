@@ -14,3 +14,9 @@ will be pretty meaningless to anyone not using the Orchestrator. V4
 compatibility will follow when Mark has time.
 
 Talk to Mark if you have any questions.
+
+Compatibility and Language
+===
+
+Each tool has it's own section about this - you have been warned (they're very
+MLV-centric for now, but can be extended for portability within reason).
