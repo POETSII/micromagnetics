@@ -5,5 +5,5 @@
 int main(int argc, char** argv)
 {
     return template_files("fragments/micromagnetics_template.xml",
-                          "output.xml");
+                          "micromagnetics_1d_20.xml");
 }
