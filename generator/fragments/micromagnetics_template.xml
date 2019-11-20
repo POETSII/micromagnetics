@@ -2,11 +2,13 @@
 <!--
     This XML is a template that describes one-dimensional micromagnetic
     simulation. It is to be populated with a series of files found in moustache
-    brackets; the idea being that the generator impregnates this template with
-    problem-specific information, including
+    brackets ("{{" and "}}", without quotes).
 
      - Energy terms, and their governing coefficients.
      - Initial conditions.
+
+    If this is a POETS-ready XML (i.e. it's gone through the generator), this
+    file should not contain any moustache brackets.
 -->
 
 <Graphs xmlns="https://poets-project.org/schemas/virtual-graph-schema-v2">
