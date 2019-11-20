@@ -68,7 +68,7 @@ int template_files(char* inPath, char* outPath)
     }
 
     /* Use templating engine. */
-    rc = template(inFile, outFile);
+    rc = template(inFile, outFile, dirname(inPath));
 
     /* Cleanup. */
     fclose(inFile);
@@ -78,6 +78,9 @@ int template_files(char* inPath, char* outPath)
 
 /* This function performs templating on the file at "inFile", and writes it to
  * file at "outFile". Both character arrays must be null-terminated.
+ *
+ * Also accepts a character array "dir", which is the base directory for all
+ * template files, and must fit with each template in MOUSTACHE_BUFFER_SIZE.
  *
  * If there are no moustaches in the file at "inFile", the file is simply
  * copied to "outFile".
@@ -90,7 +93,7 @@ int template_files(char* inPath, char* outPath)
  * this is exploited when recursing moustaches.
  *
  * Returns 0 if no errors occured, and errno (non-zero) otherwise. */
-int template(FILE* inFile, FILE* outFile)
+int template(FILE* inFile, FILE* outFile, char* dir)
 {
     /* Characters, read from inFile. */
     int thisChar;
@@ -143,7 +146,8 @@ int template(FILE* inFile, FILE* outFile)
                 }
 
                 /* Recurse, propagating any errors. */
-                error = template(middleFile, outFile);
+                error = template(middleFile, outFile,
+                                 dirname(moustacheBuffer));
                 fclose(middleFile);
                 if (error != 0) return error;
             }
@@ -161,11 +165,14 @@ int template(FILE* inFile, FILE* outFile)
                 /* Enter moustache mode. */
                 moustacheMode = 1;
 
-                /* Clear the moustache buffer. */
+                /* Clear the moustache buffer, putting the directory at the
+                 * start. */
                 for (moustacheIndex = 0;
                      moustacheIndex < MOUSTACHE_BUFFER_SIZE;
                      moustacheBuffer[moustacheIndex++] = 0);
-                moustacheIndex = 0;
+                strcpy(moustacheBuffer, dir);
+                strcat(moustacheBuffer, "/");
+                moustacheIndex = strlen(dir) + 1;
 
                 /* If so, remove the previous curly brace by moving the write
                  * pointer backwards by one. */
