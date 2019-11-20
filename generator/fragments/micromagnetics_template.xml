@@ -1,0 +1,203 @@
+<?xml version="1.0"?>
+<!--
+    This XML is a template that describes one-dimensional micromagnetic
+    simulation. It is to be populated with a series of files found in moustache
+    brackets; the idea being that the generator impregnates this template with
+    problem-specific information, including
+
+     - Energy terms, and their governing coefficients.
+     - Initial conditions.
+-->
+
+<Graphs xmlns="https://poets-project.org/schemas/virtual-graph-schema-v2">
+  <GraphType id="micromagnetic_simulation_1d">
+    <MessageTypes>
+      <MessageType id="state">
+        <Message>
+          <Scalar type="float" name="m_x0"/>
+          <Scalar type="float" name="m_x1"/>
+          <Scalar type="float" name="m_x2"/>
+          <Scalar type="uint32_t" name="iteration"/>
+        </Message>
+      </MessageType>
+      <MessageType id="exfiltration">
+        <Message>
+          <Scalar type="uint8_t" name="x0"/>
+          <Scalar type="float" name="m_x0"/>
+          <Scalar type="float" name="m_x1"/>
+          <Scalar type="float" name="m_x2"/>
+          <Scalar type="uint32_t" name="iteration"/>
+        </Message>
+      </MessageType>
+    </MessageTypes>
+    <DeviceTypes>
+      <DeviceType id="fd_point">
+        <Properties>
+          <!-- Where am I? (for the Supervisor's benefit) -->
+          <Scalar type="uint8_t" name="x0"/>
+
+          <!-- Do we have neighbours? -->
+          <Scalar type="uint8_t" name="x0plus_exists" default="1"/>
+          <Scalar type="uint8_t" name="x0minus_exists" default="1"/>
+
+          <!-- Effective field coefficients -->
+          <Scalar type="float" name="exchange_coeff" default="0.5"/>
+          <Scalar type="float" name="dmi_coeff" default="0.5"/>
+          <Scalar type="float" name="zeeman_coeff" default="0"/>
+        </Properties>
+        <State>
+          <Scalar type="uint8_t" name="did_we_just_update" default="0"/>
+
+          <!-- "Our" state". Note that "iteration" starts at one; this is to
+               stop us stepping forward before receiving our neighbours'
+               initial states (which begin at zero).
+
+               Also, all spins are pointing straight up, unless otherwise
+               stated. -->
+          <Scalar type="uint32_t" name="iteration" default="1"/>
+          <Scalar type="float" name="m_x0" default="0"/>
+          <Scalar type="float" name="m_x1" default="0"/>
+          <Scalar type="float" name="m_x2" default="1"/>
+
+          <!-- Have we sent our initial packet to anyone? -->
+          <Scalar type="uint8_t" name="is_initialised" default="0"/>
+
+          <!-- The state of our neighbours (x0plus, and x0minus) -->
+          <Scalar type="uint32_t" name="iteration_x0plus" default = "0"/>
+          <Scalar type="float" name="m_x0_x0plus_even"/>
+          <Scalar type="float" name="m_x1_x0plus_even"/>
+          <Scalar type="float" name="m_x2_x0plus_even"/>
+          <Scalar type="float" name="m_x0_x0plus_odd"/>
+          <Scalar type="float" name="m_x1_x0plus_odd"/>
+          <Scalar type="float" name="m_x2_x0plus_odd"/>
+
+          <Scalar type="uint32_t" name="iteration_x0minus" default = "0"/>
+          <Scalar type="float" name="m_x0_x0minus_even"/>
+          <Scalar type="float" name="m_x1_x0minus_even"/>
+          <Scalar type="float" name="m_x2_x0minus_even"/>
+          <Scalar type="float" name="m_x0_x0minus_odd"/>
+          <Scalar type="float" name="m_x1_x0minus_odd"/>
+          <Scalar type="float" name="m_x2_x0minus_odd"/>
+        </State>
+        <ReadyToSend><![CDATA[
+{{fd_point_rts.c}}
+        ]]></ReadyToSend>
+
+        <OnCompute><![CDATA[
+{{fd_point_on_compute.c}}
+        ]]></OnCompute>
+
+        <!-- Getting the word out to our neighbours. -->
+        <OutputPin name="state_push" messageTypeId="state">
+          <OnSend><![CDATA[
+{{populate_state_message.c}}
+          ]]></OnSend>
+        </OutputPin>
+
+        <!-- Getting the word out to the supervisor. -->
+        <OutputPin name="exfiltrate" messageTypeId="exfiltration">
+          <OnSend><![CDATA[
+{{populate_exfiltration_message.c}}
+          ]]></OnSend>
+        </OutputPin>
+
+        <!-- Receiving the word from our neighbours. -->
+        <InputPin name="state_recv_x0plus" messageTypeId="state">
+          <OnReceive><![CDATA[
+{{fd_point_recv_x0plus_1d.c}}
+          ]]></OnReceive>
+        </InputPin>
+
+        <InputPin name="state_recv_x0minus" messageTypeId="state">
+          <OnReceive><![CDATA[
+{{fd_point_recv_x0minus_1d.c}}
+          ]]></OnReceive>
+        </InputPin>
+      </DeviceType>
+
+      <SupervisorDeviceType id="supervisor">
+        <Code><![CDATA[
+#include <stdio.h>
+        ]]></Code>
+        <InputPin name="exfiltrate" messageTypeId="exfiltration">
+          <OnReceive><![CDATA[
+printf("%u\t%u\t%f\t%f\%f\n", message->x0, message->iteration,
+       message->m_x0, message->m_x1, message->m_x2);
+          ]]></OnReceive>
+        </InputPin>
+      </SupervisorDeviceType>
+    </DeviceTypes>
+  </GraphType>
+  <GraphInstance id="micromagnetics_1d_20"
+                 graphTypeId="micromagnetic_simulation_1d">
+    <DeviceInstances>
+      <!-- Twenty devices in a row, all pointing up, except for device zero
+           which points down. -->
+      <DevI id="0" type="fd_point">
+        <P>"x0": 0, "x0minus_exists": 0, "m_x2": -1</P>
+      </DevI>
+      <DevI id="1" type="fd_point"><P>"x0": 1</P></DevI>
+      <DevI id="2" type="fd_point"><P>"x0": 2</P></DevI>
+      <DevI id="3" type="fd_point"><P>"x0": 3</P></DevI>
+      <DevI id="4" type="fd_point"><P>"x0": 4</P></DevI>
+      <DevI id="5" type="fd_point"><P>"x0": 5</P></DevI>
+      <DevI id="6" type="fd_point"><P>"x0": 6</P></DevI>
+      <DevI id="7" type="fd_point"><P>"x0": 7</P></DevI>
+      <DevI id="8" type="fd_point"><P>"x0": 8</P></DevI>
+      <DevI id="9" type="fd_point"><P>"x0": 9</P></DevI>
+      <DevI id="10" type="fd_point"><P>"x0": 10</P></DevI>
+      <DevI id="11" type="fd_point"><P>"x0": 11</P></DevI>
+      <DevI id="12" type="fd_point"><P>"x0": 12</P></DevI>
+      <DevI id="13" type="fd_point"><P>"x0": 13</P></DevI>
+      <DevI id="14" type="fd_point"><P>"x0": 14</P></DevI>
+      <DevI id="15" type="fd_point"><P>"x0": 15</P></DevI>
+      <DevI id="16" type="fd_point"><P>"x0": 16</P></DevI>
+      <DevI id="17" type="fd_point"><P>"x0": 17</P></DevI>
+      <DevI id="18" type="fd_point"><P>"x0": 18</P></DevI>
+      <DevI id="19" type="fd_point"><P>"x0": 19, "x0plus_exists": 0</P></DevI>
+    </DeviceInstances>
+    <EdgeInstances>
+      <!-- From x0minus to x0plus (e.g. 0->1, 1->2) -->
+      <EdgeI path="1:state_recv_x0minus-0:state_push"/>
+      <EdgeI path="2:state_recv_x0minus-1:state_push"/>
+      <EdgeI path="3:state_recv_x0minus-2:state_push"/>
+      <EdgeI path="4:state_recv_x0minus-3:state_push"/>
+      <EdgeI path="5:state_recv_x0minus-4:state_push"/>
+      <EdgeI path="6:state_recv_x0minus-5:state_push"/>
+      <EdgeI path="7:state_recv_x0minus-6:state_push"/>
+      <EdgeI path="8:state_recv_x0minus-7:state_push"/>
+      <EdgeI path="9:state_recv_x0minus-8:state_push"/>
+      <EdgeI path="10:state_recv_x0minus-9:state_push"/>
+      <EdgeI path="11:state_recv_x0minus-10:state_push"/>
+      <EdgeI path="12:state_recv_x0minus-11:state_push"/>
+      <EdgeI path="13:state_recv_x0minus-12:state_push"/>
+      <EdgeI path="14:state_recv_x0minus-13:state_push"/>
+      <EdgeI path="15:state_recv_x0minus-14:state_push"/>
+      <EdgeI path="16:state_recv_x0minus-15:state_push"/>
+      <EdgeI path="17:state_recv_x0minus-16:state_push"/>
+      <EdgeI path="18:state_recv_x0minus-17:state_push"/>
+      <EdgeI path="19:state_recv_x0minus-18:state_push"/>
+      <!-- From x0plus to x0minus (e.g. 1->0, 2->1) -->
+      <EdgeI path="0:state_recv_x0plus-1:state_push"/>
+      <EdgeI path="1:state_recv_x0plus-2:state_push"/>
+      <EdgeI path="2:state_recv_x0plus-3:state_push"/>
+      <EdgeI path="3:state_recv_x0plus-4:state_push"/>
+      <EdgeI path="4:state_recv_x0plus-5:state_push"/>
+      <EdgeI path="5:state_recv_x0plus-6:state_push"/>
+      <EdgeI path="6:state_recv_x0plus-7:state_push"/>
+      <EdgeI path="7:state_recv_x0plus-8:state_push"/>
+      <EdgeI path="8:state_recv_x0plus-9:state_push"/>
+      <EdgeI path="9:state_recv_x0plus-10:state_push"/>
+      <EdgeI path="10:state_recv_x0plus-11:state_push"/>
+      <EdgeI path="11:state_recv_x0plus-12:state_push"/>
+      <EdgeI path="12:state_recv_x0plus-13:state_push"/>
+      <EdgeI path="13:state_recv_x0plus-14:state_push"/>
+      <EdgeI path="14:state_recv_x0plus-15:state_push"/>
+      <EdgeI path="15:state_recv_x0plus-16:state_push"/>
+      <EdgeI path="16:state_recv_x0plus-17:state_push"/>
+      <EdgeI path="17:state_recv_x0plus-18:state_push"/>
+      <EdgeI path="18:state_recv_x0plus-19:state_push"/>
+      <EdgeI path="19:state_recv_x0plus-20:state_push"/>
+    </EdgeInstances>
+  </GraphInstance>
+</Graphs>
