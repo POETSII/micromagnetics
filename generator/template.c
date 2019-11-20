@@ -34,15 +34,11 @@
  *
  * There's very little in here that protects the user, so be careful! */
 
-#include <errno.h>
-#include <stdio.h>
-#include <string.h>
-
-#define MOUSTACHE_OPEN_CODE 123  /* '{' */
-#define MOUSTACHE_CLOSE_CODE 125  /* '}' */
-#define MOUSTACHE_BUFFER_SIZE 1000
-
 #include "template.h"
+
+#define MOUSTACHE_OPEN_CODE 123  /* '{', you'll need two of them */
+#define MOUSTACHE_CLOSE_CODE 125  /* '}', you'll need two of them */
+#define MOUSTACHE_BUFFER_SIZE 1000  /* Scream if you want to go faster! */
 
 /* This function performs templating on the file at "inFile", and writes it to
  * file at "outFile". Both character arrays must be null-terminated.
@@ -54,32 +50,39 @@
  * write-binary mode for this to work as intended (but by all means play
  * around).
  *
- * Returns 0 if no errors occured, and 1 otherwise. */
+ * You can even move the read/write pointers to parse certain areas of files -
+ * this is exploited when recursing moustaches.
+ *
+ * Returns 0 if no errors occured, and errno (non-zero) otherwise. */
 int template(FILE* inFile, FILE* outFile)
 {
-    /* Characters */
+    /* Characters, read from inFile. */
     int thisChar;
     int previousChar;
 
     /* Moustache mode */
-    int moustacheMode;
-    char moustacheBuffer[MOUSTACHE_BUFFER_SIZE];
-    int moustacheIndex;
+    int moustacheMode;  /* Are we in moustache mode? */
+    char moustacheBuffer[MOUSTACHE_BUFFER_SIZE];  /* Holds moustache
+                                                   * contents. (NB: Not the
+                                                   * contents of the file in
+                                                   * the moustache!) */
+    int moustacheIndex;  /* How deep are we into the moustache? */
 
-    /* For recursion */
+    /* For recursion; this function calls itself to resolve nested
+     * moustaches. */
     FILE* middleFile;
 
-    /* Reporting */
+    /* Reporting (holds errno values) */
     int error;
 
     /* Initialisation */
     moustacheIndex = 0;
     moustacheMode = 0;
     error = 0;
+    previousChar = 0;
+    thisChar = fgetc(inFile);  /* The first of many (hopefully). */
 
     /* Read until we hit EOF in the input file. */
-    thisChar = fgetc(inFile);
-    previousChar = 0;
     while (thisChar != EOF)
     {
         /* Are we currently in moustache mode? */
@@ -94,21 +97,19 @@ int template(FILE* inFile, FILE* outFile)
                 moustacheMode = 0;
                 moustacheBuffer[moustacheIndex - 1] = 0;
 
-                /* Recurse! */
+                /* Open the contents of the next-level moustache. */
                 middleFile = fopen(moustacheBuffer, "rb+");
                 if (middleFile == NULL)
                 {
                     fprintf(stderr, "Error opening nested file '%s': %s.\n",
                             moustacheBuffer, strerror(errno));
-                    error = 1;
-                    break;
+                    return errno;
                 }
 
-                if (template(middleFile, outFile) != 0)
-                {
-                    error = 1;
-                    break;
-                }
+                /* Recurse, propagating any errors. */
+                error = template(middleFile, outFile);
+                fclose(middleFile);
+                if (error != 0) return error;
             }
 
             /* Otherwise, store the character in the moustache buffer. */
@@ -141,52 +142,17 @@ int template(FILE* inFile, FILE* outFile)
                 if (fputc(thisChar, outFile) == EOF)
                 {
                     fprintf(stderr, "Error writing to output file.\n");
-                    error = 1;
-                    break;
+                    return errno;
                 }
             }
         }
 
-        /* Next loop setup */
+        /* Next loop setup. */
         previousChar = thisChar;
         thisChar = fgetc(inFile);
     }
 
-    return error;
-}
-
-int main(int argc, char** argv)
-{
-    FILE* inFile;
-    FILE* outFile;
-    int rc;
-
-    /* Open the input and output files. */
-    inFile = fopen(argv[1], "rb+");
-    if (inFile == NULL)
-    {
-        fprintf(stderr,
-                "Error opening input file '%s': %s.\n",
-                argv[1], strerror(errno));
-        return 1;
-    }
-
-    outFile = fopen(argv[2], "wb");
-    if (outFile == NULL)
-    {
-        fprintf(stderr,
-                "Error opening output file '%s': %s.\n",
-                argv[2], strerror(errno));
-        fclose(inFile);
-        return 1;
-    }
-
-    rc = template(inFile, outFile);
-
-    /* Cleanup. */
-    fclose(inFile);
-    fclose(outFile);
-    return rc;
+    return 0; /* If we made it all the way here, we're pretty safe. */
 }
 
 #undef MOUSTACHE_OPEN_CODE
