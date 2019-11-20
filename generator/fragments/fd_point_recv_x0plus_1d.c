@@ -1,5 +1,5 @@
 deviceState->iteration_x0plus = message->iteration;
-if (deviceState->iteration_x0plus % 2)
+if (deviceState->iteration_x0plus & 1)
 {
     deviceState->m_x0_x0plus_odd = message->m_x0;
     deviceState->m_x1_x0plus_odd = message->m_x1;

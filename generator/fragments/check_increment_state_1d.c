@@ -21,7 +21,7 @@ if (goingToUpdate == 1)
     float m_x2_x0minus;
 
     /* Which buffer should we use? */
-    if (deviceState->iteration % 2)
+    if (deviceState->iteration & 1)
     {
         m_x0_x0plus = deviceState->m_x0_x0plus_odd;
         m_x1_x0plus = deviceState->m_x1_x0plus_odd;
