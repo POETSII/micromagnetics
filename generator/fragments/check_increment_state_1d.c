@@ -69,8 +69,8 @@ if (goingToUpdate == 1)
     deviceState->m_x2 += 1e-13 * dmdt_x2;
 
     /* We did it! This variable notifies the ReadyToSend (RTS) handler that
-     * we've just updated. Once read, the RTS handler will set this to zero, so
-     * that successive RTSs don't send a message unless a new state can be
-     * computed. */
+     * we've just updated. Once read, the output pin handler will set this to
+     * zero, so that successive RTSs don't send a message unless a new state
+     * can be computed. */
     deviceState->did_we_just_update = 1;
 }
