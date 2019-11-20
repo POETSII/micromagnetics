@@ -46,8 +46,8 @@
           <Scalar type="uint8_t" name="x0minus_exists" default="1"/>
 
           <!-- Effective field coefficients -->
-          <Scalar type="float" name="exchange_coeff" default="0.5"/>
-          <Scalar type="float" name="dmi_coeff" default="0.5"/>
+          <Scalar type="float" name="exchange_coeff" default="0"/>
+          <Scalar type="float" name="dmi_coeff" default="0"/>
           <Scalar type="float" name="zeeman_coeff" default="0"/>
         </Properties>
         <State>
@@ -154,7 +154,7 @@ fclose(dataFile);
       <!-- Twenty devices in a row, all pointing up, except for device zero
            which points down. -->
       <DevI id="0" type="fd_point">
-        <P>"x0": 0, "x0minus_exists": 0, "m_x2": -1</P>
+        <P>"x0": 0, "x0minus_exists": 0, "m_x1": 42, "m_x2": -1</P>
       </DevI>
       <DevI id="1" type="fd_point"><P>"x0": 1</P></DevI>
       <DevI id="2" type="fd_point"><P>"x0": 2</P></DevI>
