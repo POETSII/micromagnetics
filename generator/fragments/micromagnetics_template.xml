@@ -214,7 +214,27 @@ printf("%u\t%u\t%f\t%f\%f\n", message->x0, message->iteration,
       <EdgeI path="16:state_recv_x0plus-17:state_push"/>
       <EdgeI path="17:state_recv_x0plus-18:state_push"/>
       <EdgeI path="18:state_recv_x0plus-19:state_push"/>
-      <EdgeI path="19:state_recv_x0plus-20:state_push"/>
+      <!-- From compute devices to their supervisor -->
+      <EdgeI path=":exfiltrate-0:exfiltrate"/>
+      <EdgeI path=":exfiltrate-1:exfiltrate"/>
+      <EdgeI path=":exfiltrate-2:exfiltrate"/>
+      <EdgeI path=":exfiltrate-3:exfiltrate"/>
+      <EdgeI path=":exfiltrate-4:exfiltrate"/>
+      <EdgeI path=":exfiltrate-5:exfiltrate"/>
+      <EdgeI path=":exfiltrate-6:exfiltrate"/>
+      <EdgeI path=":exfiltrate-7:exfiltrate"/>
+      <EdgeI path=":exfiltrate-8:exfiltrate"/>
+      <EdgeI path=":exfiltrate-9:exfiltrate"/>
+      <EdgeI path=":exfiltrate-10:exfiltrate"/>
+      <EdgeI path=":exfiltrate-11:exfiltrate"/>
+      <EdgeI path=":exfiltrate-12:exfiltrate"/>
+      <EdgeI path=":exfiltrate-13:exfiltrate"/>
+      <EdgeI path=":exfiltrate-14:exfiltrate"/>
+      <EdgeI path=":exfiltrate-15:exfiltrate"/>
+      <EdgeI path=":exfiltrate-16:exfiltrate"/>
+      <EdgeI path=":exfiltrate-17:exfiltrate"/>
+      <EdgeI path=":exfiltrate-18:exfiltrate"/>
+      <EdgeI path=":exfiltrate-19:exfiltrate"/>
     </EdgeInstances>
   </GraphInstance>
 </Graphs>
