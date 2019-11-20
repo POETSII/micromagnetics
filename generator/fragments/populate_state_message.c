@@ -6,3 +6,7 @@ message->m_x2 = deviceState->m_x2;
 /* Set this to prevent on ReadyToSend from trying to fire another message after
  * this one. */
 deviceState->did_we_just_update = 0;
+
+/* Set this to prevent OnIdle from trying to fire another initialisation
+ * message. */
+deviceState->is_initialised = 1;

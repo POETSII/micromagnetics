@@ -1,4 +1,4 @@
-if (deviceState->did_we_just_update)
+if (deviceState->did_we_just_update || deviceState->is_initialised == 0)
 {
     *readyToSend |= RTS_FLAG_state_push;
 
