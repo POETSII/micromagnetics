@@ -40,6 +40,42 @@
 #define MOUSTACHE_CLOSE_CODE 125  /* '}', you'll need two of them */
 #define MOUSTACHE_BUFFER_SIZE 1000  /* Scream if you want to go faster! */
 
+/* Simple wrapper around template to handle file opening and closing. */
+int template_files(char* inPath, char* outPath)
+{
+    FILE* inFile;
+    FILE* outFile;
+    int rc;
+
+    /* Open the input and output files. */
+    inFile = fopen(inPath, "rb+");
+    if (inFile == NULL)
+    {
+        fprintf(stderr,
+                "Error opening input file '%s': %s.\n",
+                inPath, strerror(errno));
+        return 1;
+    }
+
+    outFile = fopen(outPath, "wb");
+    if (outFile == NULL)
+    {
+        fprintf(stderr,
+                "Error opening output file '%s': %s.\n",
+                outPath, strerror(errno));
+        fclose(inFile);
+        return 1;
+    }
+
+    /* Use templating engine. */
+    rc = template(inFile, outFile);
+
+    /* Cleanup. */
+    fclose(inFile);
+    fclose(outFile);
+    return rc;
+}
+
 /* This function performs templating on the file at "inFile", and writes it to
  * file at "outFile". Both character arrays must be null-terminated.
  *
