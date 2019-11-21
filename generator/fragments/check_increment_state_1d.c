@@ -9,10 +9,10 @@ if (deviceProperties->x0minus_exists)
         goingToUpdate = 0;
 if (goingToUpdate == 1)
 {
-    /* Compute exchange field. */
-    float h_eff_x0;
-    float h_eff_x1;
-    float h_eff_x2;
+    /* Compute exchange field, multiplied by the time differential dt */
+    float h_eff_dt_x0;
+    float h_eff_dt_x1;
+    float h_eff_dt_x2;
     float m_x0_x0plus;
     float m_x1_x0plus;
     float m_x2_x0plus;
@@ -41,32 +41,40 @@ if (goingToUpdate == 1)
     }
 
     /* Exchange effective field. */
-    h_eff_x0 = deviceProperties->exchange_coeff * (m_x0_x0plus + m_x0_x0minus);
-    h_eff_x1 = deviceProperties->exchange_coeff * (m_x1_x0plus + m_x1_x0minus);
-    h_eff_x2 = deviceProperties->exchange_coeff * (m_x2_x0plus + m_x2_x0minus);
+    h_eff_dt_x0 = deviceProperties->exchange_coeff_dt *
+        (m_x0_x0plus + m_x0_x0minus);
+    h_eff_dt_x1 = deviceProperties->exchange_coeff_dt *
+        (m_x1_x0plus + m_x1_x0minus);
+    h_eff_dt_x2 = deviceProperties->exchange_coeff_dt *
+        (m_x2_x0plus + m_x2_x0minus);
 
-    /* Stir in a little DMI. */
-    h_eff_x1 += deviceProperties->dmi_coeff * (m_x2_x0plus - m_x2_x0minus);
-    h_eff_x2 += deviceProperties->dmi_coeff * (m_x1_x0minus - m_x1_x0plus);
+    /* Stir in a little DMI (it's a cross product, and since we're in 1d,
+     * there's no x1 differential and no x2 differential, so there's no x0
+     * contribution by DMI to the effective field). */
+    h_eff_dt_x1 += deviceProperties->dmi_coeff_dt *
+        (m_x2_x0plus - m_x2_x0minus);
+    h_eff_dt_x2 += deviceProperties->dmi_coeff_dt *
+        (m_x1_x0minus - m_x1_x0plus);
 
-    /* Precessionless LLG (see p30 of MLV's thesis) */
-    float dmdt_x0;
-    float dmdt_x1;
-    float dmdt_x2;
-    float m_dot_h;
+    /* Precessionless LLG, with euler (see p30 of MLV's thesis) */
+    float dm_x0;
+    float dm_x1;
+    float dm_x2;
+    float m_dot_h_dt;
 
-    m_dot_h = deviceState->m_x0 * h_eff_x0 +
-        deviceState->m_x1 * h_eff_x1 +
-        deviceState->m_x2 * h_eff_x2;
-    dmdt_x0 = m_dot_h * deviceState->m_x0 - h_eff_x0;
-    dmdt_x1 = m_dot_h * deviceState->m_x1 - h_eff_x1;
-    dmdt_x2 = m_dot_h * deviceState->m_x2 - h_eff_x2;
+    m_dot_h_dt = deviceState->m_x0 * h_eff_dt_x0 +
+        deviceState->m_x1 * h_eff_dt_x1 +
+        deviceState->m_x2 * h_eff_dt_x2;
+    dm_x0 = m_dot_h_dt * deviceState->m_x0 - h_eff_dt_x0;
+    dm_x1 = m_dot_h_dt * deviceState->m_x1 - h_eff_dt_x1;
+    dm_x2 = m_dot_h_dt * deviceState->m_x2 - h_eff_dt_x2;
 
-    /* Step forward in time (Euler), with dt = 1e-13 seconds. */
+    /* Step forward in time (Euler). Note that dt is incorporated into the
+     * effective field coefficients (so make the FPU less confused). */
     deviceState->iteration++;
-    deviceState->m_x0 += 1e-13 * dmdt_x0;
-    deviceState->m_x1 += 1e-13 * dmdt_x1;
-    deviceState->m_x2 += 1e-13 * dmdt_x2;
+    deviceState->m_x0 += dm_x0;
+    deviceState->m_x1 += dm_x1;
+    deviceState->m_x2 += dm_x2;
 
     /* We did it! This variable notifies the ReadyToSend (RTS) handler that
      * we've just updated. Once read, the output pin handler will set this to
