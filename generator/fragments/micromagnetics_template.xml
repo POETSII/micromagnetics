@@ -162,7 +162,8 @@ fclose(dataFile);
       <!-- Twenty devices in a row, all pointing up, except for device zero
            which points down. -->
       <DevI id="0" type="fd_point">
-        <P>"x0": 0, "x0minus_exists": 0, "m_x2": -1</P>
+        <P>"x0": 0, "x0minus_exists": 0</P>
+        <S>"m_x2": -1</S>
       </DevI>
       <DevI id="1" type="fd_point"><P>"x0": 1</P></DevI>
       <DevI id="2" type="fd_point"><P>"x0": 2</P></DevI>
