@@ -56,6 +56,9 @@ if (goingToUpdate == 1)
     h_eff_dt_x2 += deviceProperties->dmi_coeff_dt *
         (m_x1_x0minus - m_x1_x0plus);
 
+    /* Zeeman energy (influence of big external magnet). */
+    h_eff_dt_x2 += deviceProperties->zeeman_coeff_dt;
+
     /* Precessionless LLG, with euler (see p30 of MLV's thesis) */
     float dm_x0;
     float dm_x1;
