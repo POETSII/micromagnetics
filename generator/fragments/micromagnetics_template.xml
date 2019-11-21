@@ -46,7 +46,7 @@
           <Scalar type="uint8_t" name="x0minus_exists" default="1"/>
 
           <!-- Effective field coefficients, including the time differential to
-               easte the burden on the FPU. Currently:
+               ease the burden on the FPU. Currently:
 
                - exchange_coeff_dt = 2*A*(dt)/mu_0/Ms  *h*h
                - dmi_coeff_dt = D*(dt)/2/h/mu_0/Ms
@@ -60,12 +60,11 @@
                - mu_0 = 4e-7 * pi [NA-2]
                - H = 15.4 * Ms
                - dt = 1e-13 [s]
-               - h = 1e-9
+               - h = 1e-9 [m]
 
                Zeeman field is (0, 0, 1).
 
-               Be suspicious of the exchange coefficient.
-          -->
+               Be suspicious of the exchange coefficient. -->
           <Scalar type="float" name="exchange_coeff_dt" default="6.702e-7"/>
           <Scalar type="float" name="dmi_coeff_dt" default="1.130979e-7"/>
           <Scalar type="float" name="zeeman_coeff_dt" default="-1.463e-7"/>
@@ -73,7 +72,7 @@
         <State>
           <Scalar type="uint8_t" name="did_we_just_update" default="0"/>
 
-          <!-- "Our" state". Note that "iteration" starts at one; this is to
+          <!-- "Our" state. Note that "iteration" starts at one; this is to
                stop us stepping forward before receiving our neighbours'
                initial states (which begin at zero).
 
@@ -88,7 +87,7 @@
           <Scalar type="uint8_t" name="is_initialised" default="0"/>
 
           <!-- The state of our neighbours (x0plus, and x0minus) -->
-          <Scalar type="uint32_t" name="iteration_x0plus" default = "0"/>
+          <Scalar type="uint32_t" name="iteration_x0plus" default="0"/>
           <Scalar type="float" name="m_x0_x0plus_even"/>
           <Scalar type="float" name="m_x1_x0plus_even"/>
           <Scalar type="float" name="m_x2_x0plus_even"/>
@@ -103,6 +102,27 @@
           <Scalar type="float" name="m_x0_x0minus_odd"/>
           <Scalar type="float" name="m_x1_x0minus_odd"/>
           <Scalar type="float" name="m_x2_x0minus_odd"/>
+
+          <!-- This is not really state, but these are intermediate values that
+               are allocated in handlers. We do this here to save repeated
+               allocations. -->
+          <Scalar type="uint8_t" name="goingToUpdate"/>
+          <Scalar type="float" name="h_eff_dt_x0"/>
+          <Scalar type="float" name="h_eff_dt_x1"/>
+          <Scalar type="float" name="h_eff_dt_x2"/>
+          <Scalar type="float" name="m_x0_x0plus"/>
+          <Scalar type="float" name="m_x1_x0plus"/>
+          <Scalar type="float" name="m_x2_x0plus"/>
+          <Scalar type="float" name="m_x0_x0minus"/>
+          <Scalar type="float" name="m_x1_x0minus"/>
+          <Scalar type="float" name="m_x2_x0minus"/>
+          <Scalar type="float" name="dm_x0"/>
+          <Scalar type="float" name="dm_x1"/>
+          <Scalar type="float" name="dm_x2"/>
+          <Scalar type="float" name="m_dot_h_dt"/>
+
+          <!-- Debugging -->
+          <Scalar type="float" name="tmp"/>
         </State>
         <ReadyToSend><![CDATA[
 {{fd_point_rts.c}}
@@ -160,8 +180,8 @@
           <OnReceive><![CDATA[
 FILE* dataFile;
 dataFile = fopen("micromagnetics_1d_20_data.tsv", "a");
-fprintf(dataFile, "%u\t%u\t%f\t%f\t%f\n", message->x0, message->iteration,
-        message->m_x0, message->m_x1, message->m_x2);
+fprintf(dataFile, "%u\t%u\t%f\t%f\t%f\n",
+message->x0, message->iteration, message->m_x0, message->m_x1, message->m_x2);
 fclose(dataFile);
           ]]></OnReceive>
         </InputPin>
