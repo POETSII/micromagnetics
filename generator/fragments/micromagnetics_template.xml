@@ -45,10 +45,18 @@
           <Scalar type="uint8_t" name="x0plus_exists" default="1"/>
           <Scalar type="uint8_t" name="x0minus_exists" default="1"/>
 
-          <!-- Effective field coefficients -->
-          <Scalar type="float" name="exchange_coeff" default="0.5"/>
-          <Scalar type="float" name="dmi_coeff" default="0.5"/>
-          <Scalar type="float" name="zeeman_coeff" default="0"/>
+          <!-- Effective field coefficients, including the time differential to
+               easte the burden on the FPU. Currently:
+
+               - exchange_coeff_dt = 2*A*(dt)/mu_0/Ms
+               - dmi_coeff_dt = D*(dt)/2/h/mu_0/Ms
+               - zeeman_coeff_dt = -H*(dt)
+
+               yes, I know the units don't match :(
+          -->
+          <Scalar type="float" name="exchange_coeff_dt" default="0"/>
+          <Scalar type="float" name="dmi_coeff_dt" default="0"/>
+          <Scalar type="float" name="zeeman_coeff_dt" default="0"/>
         </Properties>
         <State>
           <Scalar type="uint8_t" name="did_we_just_update" default="0"/>
