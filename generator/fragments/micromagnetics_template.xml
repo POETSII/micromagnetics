@@ -48,15 +48,27 @@
           <!-- Effective field coefficients, including the time differential to
                easte the burden on the FPU. Currently:
 
-               - exchange_coeff_dt = 2*A*(dt)/mu_0/Ms
+               - exchange_coeff_dt = 2*A*(dt)/mu_0/Ms  *h*h
                - dmi_coeff_dt = D*(dt)/2/h/mu_0/Ms
                - zeeman_coeff_dt = -H*(dt)
 
-               yes, I know the units don't match :(
+               Using:
+
+               - A = 4e-13 [Jm-1]
+               - D = 2.7e-4 [Jm-2]
+               - Ms = 9.5e4 [Am-1]
+               - mu_0 = 4e-7 * pi [NA-2]
+               - H = 15.4 * Ms
+               - dt = 1e-13 [s]
+               - h = 1e-9
+
+               Zeeman field is (0, 0, 1).
+
+               Be suspicious of the exchange coefficient.
           -->
-          <Scalar type="float" name="exchange_coeff_dt" default="0"/>
-          <Scalar type="float" name="dmi_coeff_dt" default="0"/>
-          <Scalar type="float" name="zeeman_coeff_dt" default="0"/>
+          <Scalar type="float" name="exchange_coeff_dt" default="6.702e-7"/>
+          <Scalar type="float" name="dmi_coeff_dt" default="1.130979e-7"/>
+          <Scalar type="float" name="zeeman_coeff_dt" default="-1.463e-7"/>
         </Properties>
         <State>
           <Scalar type="uint8_t" name="did_we_just_update" default="0"/>
