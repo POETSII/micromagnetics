@@ -59,30 +59,6 @@ if (deviceState->goingToUpdate == 1)
     deviceState->dm_x2 = deviceState->m_dot_h_dt * deviceState->m_x2 -
         deviceState->h_eff_dt_x2;
 
-    /* Debugging */
-    // Fixes it
-    //deviceState->exfil_chan_0 = m_dot_h_dt;
-    //deviceState->exfil_chan_1 = m_dot_h_dt * deviceState->m_x2;
-    //deviceState->exfil_chan_2 = h_eff_dt_x2;
-
-    // Fixes it
-    //deviceState->exfil_chan_0 = m_dot_h_dt * deviceState->m_x2;
-
-    // Fixes it
-    deviceState->tmp = m_dot_h_dt * deviceState->m_x2;
-
-    // Breaks it
-    //;
-
-    // Breaks it
-    //deviceState->exfil_chan_0 = deviceState->m_x2;
-
-    // Breaks it
-    //deviceState->exfil_chan_0 = m_dot_h_dt;
-
-    // Breaks it
-    //float exfil_chan_0 = m_dot_h_dt * deviceState->m_x2;
-
     /* Step forward in time (Euler). Note that dt is incorporated into the
      * effective field coefficients (so make the FPU less confused). */
     deviceState->iteration++;

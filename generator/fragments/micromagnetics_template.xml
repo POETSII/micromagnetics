@@ -88,20 +88,20 @@
 
           <!-- The state of our neighbours (x0plus, and x0minus) -->
           <Scalar type="uint32_t" name="iteration_x0plus" default="0"/>
-          <Scalar type="float" name="m_x0_x0plus_even"/>
-          <Scalar type="float" name="m_x1_x0plus_even"/>
-          <Scalar type="float" name="m_x2_x0plus_even"/>
-          <Scalar type="float" name="m_x0_x0plus_odd"/>
-          <Scalar type="float" name="m_x1_x0plus_odd"/>
-          <Scalar type="float" name="m_x2_x0plus_odd"/>
+          <Scalar type="float" name="m_x0_x0plus_even" default="0"/>
+          <Scalar type="float" name="m_x1_x0plus_even" default="0"/>
+          <Scalar type="float" name="m_x2_x0plus_even" default="0"/>
+          <Scalar type="float" name="m_x0_x0plus_odd" default="0"/>
+          <Scalar type="float" name="m_x1_x0plus_odd" default="0"/>
+          <Scalar type="float" name="m_x2_x0plus_odd" default="0"/>
 
-          <Scalar type="uint32_t" name="iteration_x0minus" default = "0"/>
-          <Scalar type="float" name="m_x0_x0minus_even"/>
-          <Scalar type="float" name="m_x1_x0minus_even"/>
-          <Scalar type="float" name="m_x2_x0minus_even"/>
-          <Scalar type="float" name="m_x0_x0minus_odd"/>
-          <Scalar type="float" name="m_x1_x0minus_odd"/>
-          <Scalar type="float" name="m_x2_x0minus_odd"/>
+          <Scalar type="uint32_t" name="iteration_x0minus" default="0"/>
+          <Scalar type="float" name="m_x0_x0minus_even" default="0"/>
+          <Scalar type="float" name="m_x1_x0minus_even" default="0"/>
+          <Scalar type="float" name="m_x2_x0minus_even" default="0"/>
+          <Scalar type="float" name="m_x0_x0minus_odd" default="0"/>
+          <Scalar type="float" name="m_x1_x0minus_odd" default="0"/>
+          <Scalar type="float" name="m_x2_x0minus_odd" default="0"/>
 
           <!-- This is not really state, but these are intermediate values that
                are allocated in handlers. We do this here to save repeated
@@ -120,9 +120,6 @@
           <Scalar type="float" name="dm_x1"/>
           <Scalar type="float" name="dm_x2"/>
           <Scalar type="float" name="m_dot_h_dt"/>
-
-          <!-- Debugging -->
-          <Scalar type="float" name="tmp"/>
         </State>
         <ReadyToSend><![CDATA[
 {{fd_point_rts.c}}
