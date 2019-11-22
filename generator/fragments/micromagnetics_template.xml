@@ -45,64 +45,69 @@
           <Scalar type="uint8_t" name="x0plus_exists" default="1"/>
           <Scalar type="uint8_t" name="x0minus_exists" default="1"/>
 
-          <!-- Effective field coefficients, including the time differential to
-               easte the burden on the FPU. Currently:
+          <!-- Effective field coefficients, including the time differential
+               and scalaing parameters to ease the burden on the
+               FPU. Currently:
 
-               - exchange_coeff_dt = 2*A*(dt)/mu_0/Ms  *h*h
-               - dmi_coeff_dt = D*(dt)/2/h/mu_0/Ms
-               - zeeman_coeff_dt = -H*(dt)
+               - exchange_coeff = 2*A*(dt)*gamma/mu_0/Ms
+               - dmi_coeff = D*(dt)*gamma/2/h/mu_0/Ms
+               - zeeman_coeff = -H*(dt)*gamma
 
                Using:
 
-               - A = 4e-13 [Jm-1]
-               - D = 2.7e-4 [Jm-2]
-               - Ms = 9.5e4 [Am-1]
-               - mu_0 = 4e-7 * pi [NA-2]
+               - A = 4e-13 [J][m-1]
+               - D = 2.7e-4 [J][m-2]
+               - Ms = 9.5e4 [A][m-1]
+               - mu_0 = 4e-7 * pi [kg][s-2][A-2]
                - H = 15.4 * Ms
                - dt = 1e-13 [s]
-               - h = 1e-9
+               - h = 1e-9 [m]
+               - gamma = 1.761e11 [A][s][kg-1] (2.211e5)
+               - alpha / (1 + alpha^2) = 1  (unity Gilbert damping coefficient)
 
-               Zeeman field is (0, 0, 1).
+               Zeeman field is in the (0, 0, 1) direction when H is positive.
 
                Be suspicious of the exchange coefficient.
-          -->
-          <Scalar type="float" name="exchange_coeff_dt" default="6.702e-7"/>
-          <Scalar type="float" name="dmi_coeff_dt" default="1.130979e-7"/>
-          <Scalar type="float" name="zeeman_coeff_dt" default="-1.463e-7"/>
+          <Scalar type="float" name="exchange_coeff_dt" default="1.18e5"/>
+          <Scalar type="float" name="dmi_coeff_dt" default="1.99e4"/>
+          <Scalar type="float" name="zeeman_coeff_dt" default="-2.58e4"/> -->
+          <Scalar type="float" name="exchange_coeff_dt" default="1.148e-1"/>
+          <Scalar type="float" name="dmi_coeff_dt" default="2.499e-2"/>
+          <Scalar type="float" name="zeeman_coeff_dt" default="-3.239e-2"/>
         </Properties>
         <State>
           <Scalar type="uint8_t" name="did_we_just_update" default="0"/>
 
-          <!-- "Our" state". Note that "iteration" starts at one; this is to
+          <!-- "Our" state. Note that "iteration" starts at one; this is to
                stop us stepping forward before receiving our neighbours'
                initial states (which begin at zero).
 
                Also, all spins are pointing straight up, unless otherwise
                stated. -->
           <Scalar type="uint32_t" name="iteration" default="1"/>
-          <Scalar type="float" name="m_x0" default="0"/>
-          <Scalar type="float" name="m_x1" default="0"/>
-          <Scalar type="float" name="m_x2" default="1"/>
+          <Scalar type="float" name="m_x0" default="0.0"/>
+          <Scalar type="float" name="m_x1" default="0.0"/>
+          <Scalar type="float" name="m_x2" default="1.0"/>
 
           <!-- Have we sent our initial packet to anyone? -->
           <Scalar type="uint8_t" name="is_initialised" default="0"/>
 
           <!-- The state of our neighbours (x0plus, and x0minus) -->
-          <Scalar type="uint32_t" name="iteration_x0plus" default = "0"/>
-          <Scalar type="float" name="m_x0_x0plus_even"/>
-          <Scalar type="float" name="m_x1_x0plus_even"/>
-          <Scalar type="float" name="m_x2_x0plus_even"/>
-          <Scalar type="float" name="m_x0_x0plus_odd"/>
-          <Scalar type="float" name="m_x1_x0plus_odd"/>
-          <Scalar type="float" name="m_x2_x0plus_odd"/>
+          <Scalar type="uint32_t" name="iteration_x0plus" default="0"/>
+          <Scalar type="float" name="m_x0_x0plus_even" default="0.0"/>
+          <Scalar type="float" name="m_x1_x0plus_even" default="0.0"/>
+          <Scalar type="float" name="m_x2_x0plus_even" default="0.0"/>
+          <Scalar type="float" name="m_x0_x0plus_odd" default="0.0"/>
+          <Scalar type="float" name="m_x1_x0plus_odd" default="0.0"/>
+          <Scalar type="float" name="m_x2_x0plus_odd" default="0.0"/>
 
-          <Scalar type="uint32_t" name="iteration_x0minus" default = "0"/>
-          <Scalar type="float" name="m_x0_x0minus_even"/>
-          <Scalar type="float" name="m_x1_x0minus_even"/>
-          <Scalar type="float" name="m_x2_x0minus_even"/>
-          <Scalar type="float" name="m_x0_x0minus_odd"/>
-          <Scalar type="float" name="m_x1_x0minus_odd"/>
-          <Scalar type="float" name="m_x2_x0minus_odd"/>
+          <Scalar type="uint32_t" name="iteration_x0minus" default="0"/>
+          <Scalar type="float" name="m_x0_x0minus_even" default="0.0"/>
+          <Scalar type="float" name="m_x1_x0minus_even" default="0.0"/>
+          <Scalar type="float" name="m_x2_x0minus_even" default="0.0"/>
+          <Scalar type="float" name="m_x0_x0minus_odd" default="0.0"/>
+          <Scalar type="float" name="m_x1_x0minus_odd" default="0.0"/>
+          <Scalar type="float" name="m_x2_x0minus_odd" default="0.0"/>
         </State>
         <ReadyToSend><![CDATA[
 {{fd_point_rts.c}}
@@ -160,8 +165,8 @@
           <OnReceive><![CDATA[
 FILE* dataFile;
 dataFile = fopen("micromagnetics_1d_20_data.tsv", "a");
-fprintf(dataFile, "%u\t%u\t%f\t%f\t%f\n", message->x0, message->iteration,
-        message->m_x0, message->m_x1, message->m_x2);
+fprintf(dataFile, "%u\t%u\t%f\t%f\t%f\n",
+message->x0, message->iteration, message->m_x0, message->m_x1, message->m_x2);
 fclose(dataFile);
           ]]></OnReceive>
         </InputPin>
@@ -172,10 +177,10 @@ fclose(dataFile);
                  graphTypeId="micromagnetic_simulation_1d">
     <DeviceInstances>
       <!-- Twenty devices in a row, all pointing up, except for device zero
-           which points down. -->
+           which points somewhere else. -->
       <DevI id="0" type="fd_point">
         <P>"x0": 0, "x0minus_exists": 0</P>
-        <S>"m_x2": -1</S>
+        <S>"m_x0": 1.0, "m_x1": 0.0, "m_x2": 0.0</S>
       </DevI>
       <DevI id="1" type="fd_point"><P>"x0": 1</P></DevI>
       <DevI id="2" type="fd_point"><P>"x0": 2</P></DevI>
