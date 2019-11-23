@@ -49,7 +49,7 @@
                and scalaing parameters to ease the burden on the
                FPU. Currently:
 
-               - exchange_coeff = 2*A*(dt)*gamma/mu_0/Ms
+               - exchange_coeff = 2*A*(dt)*gamma/h/mu_0/Ms
                - dmi_coeff = D*(dt)*gamma/2/h/mu_0/Ms
                - zeeman_coeff = -H*(dt)*gamma
 
@@ -59,21 +59,20 @@
                - D = 2.7e-4 [J][m-2]
                - Ms = 9.5e4 [A][m-1]
                - mu_0 = 4e-7 * pi [kg][s-2][A-2]
-               - H = 15.4 * Ms
+               - H = 15.4 * Ms (or zero)
                - dt = 1e-13 [s]
                - h = 1e-9 [m]
-               - gamma = 1.761e11 [A][s][kg-1] (2.211e5)
+               - gamma = 2.211e5 [A][s][kg-1]
                - alpha / (1 + alpha^2) = 1  (unity Gilbert damping coefficient)
 
                Zeeman field is in the (0, 0, 1) direction when H is positive.
-
-               Be suspicious of the exchange coefficient.
-          <Scalar type="float" name="exchange_coeff_dt" default="1.18e5"/>
-          <Scalar type="float" name="dmi_coeff_dt" default="1.99e4"/>
-          <Scalar type="float" name="zeeman_coeff_dt" default="-2.58e4"/> -->
-          <Scalar type="float" name="exchange_coeff_dt" default="1.148e-1"/>
+          -->
+          <Scalar type="float" name="exchange_coeff_dt" default="-1.148e-10"/>
           <Scalar type="float" name="dmi_coeff_dt" default="2.499e-2"/>
+          <!--
           <Scalar type="float" name="zeeman_coeff_dt" default="-3.239e-2"/>
+          -->
+          <Scalar type="float" name="zeeman_coeff_dt" default="0.0"/>
         </Properties>
         <State>
           <Scalar type="uint8_t" name="did_we_just_update" default="0"/>
