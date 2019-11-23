@@ -9,15 +9,23 @@ def doit():
     df["iteration"] = df["iteration"] // 8
     df = df.sort_values(by=["x0"])
 
+    # Find the last iteration with all records in it.
+    iterationEnd = df["iteration"].max()
+    while True:
+        thisIteration = df.query("iteration == {}".format(iterationEnd))
+        if (thisIteration.size == 101 * 5):  # 5 columns
+            break
+        iterationEnd -= 1
+
     # I know it's bad to set up and tear down the visualisation each iteration,
     # but none of the examples for surfaces work, and there is no documentation
     # on vector_scatter sources (*sigh*)
-
     mlab.options.offscreen = True
 
-    for iteration in range(1, df["iteration"].max()):
-
+    #for iteration in [iterationEnd]:
+    for iteration in range(1, iterationEnd):
         thisIteration = df.query("iteration == {}".format(iteration))
+
         x0 = thisIteration['x0'].values
         x1 = np.zeros_like(x0)
         x2 = np.zeros_like(x0)
@@ -42,7 +50,7 @@ def doit():
         #mlab.show()
         # Wanna save?
         mlab.savefig("out_{0:06d}.png".format(iteration), magnification=4)
-
+        #mlab.savefig("out.png", magnification=4)
         mlab.close()
 
 if __name__ == "__main__":
