@@ -4,7 +4,7 @@ from mayavi import mlab
 import pandas as pd
 
 def doit():
-    df = pd.read_csv("micromagnetics_1d_20_data.tsv", sep='\t',
+    df = pd.read_csv("micromagnetics.tsv", sep='\t',
                      names=["x0", "iteration", "m0", "m1", "m2"])
     df["iteration"] = df["iteration"] // 8
     df = df.sort_values(by=["x0"])
