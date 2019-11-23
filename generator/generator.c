@@ -81,12 +81,6 @@ int write_instances(unsigned x0Max, char* deviceInstancePath,
         /* Default properties */
         sprintf(props, "\"x0\": %u", x0);
 
-        /* x0=0 device properties */
-        if (x0 == 0) strcat(props, ", \"x0minus_exists\": 0");
-
-        /* x0=x0Max device properties */
-        if (x0 == x0Max) strcat(props, ", \"x0plus_exists\": 0");
-
         /* Initial conditions at x0. */
         if (x0 == 0) strcpy(state,
                             "\"m_x0\": 0.0, \"m_x1\": 1.0, \"m_x2\": 0.0");
@@ -114,6 +108,15 @@ int write_instances(unsigned x0Max, char* deviceInstancePath,
             fprintf(edgeInstanceFile,
                     "<EdgeI path=\"%u:state_recv_x0plus-%u:state_push\"/>\n",
                     x0, x0 + 1);
+        }
+        else  /* Periodic! */
+        {
+            fprintf(edgeInstanceFile,
+                    "<EdgeI path=\"%u:state_recv_x0minus-%u:state_push\"/>\n",
+                    0, x0);
+            fprintf(edgeInstanceFile,
+                    "<EdgeI path=\"%u:state_recv_x0plus-%u:state_push\"/>\n",
+                    x0, 0);
         }
 
         /* Supervisor edge. */

@@ -21,12 +21,8 @@ union {
 } fisr;
 
 goingToUpdate = 1;  /* Innocent until proven guilty. */
-if (deviceProperties->x0plus_exists)
-    if (deviceState->iteration_x0plus < deviceState->iteration)
-        goingToUpdate = 0;
-if (deviceProperties->x0minus_exists)
-    if(deviceState->iteration_x0minus < deviceState->iteration)
-        goingToUpdate = 0;
+if (deviceState->iteration_x0plus < deviceState->iteration) goingToUpdate = 0;
+if (deviceState->iteration_x0minus < deviceState->iteration) goingToUpdate = 0;
 if (goingToUpdate == 1)
 {
     /* Which buffer should we use for neighbour's magnetisation? */

@@ -41,10 +41,6 @@
           <!-- Where am I? (for the Supervisor's benefit) -->
           <Scalar type="uint8_t" name="x0"/>
 
-          <!-- Do we have neighbours? -->
-          <Scalar type="uint8_t" name="x0plus_exists" default="1"/>
-          <Scalar type="uint8_t" name="x0minus_exists" default="1"/>
-
           <!-- Effective field coefficients, including the time differential
                and scalaing parameters to ease the burden on the
                FPU. Currently:
