@@ -10,7 +10,8 @@
 #define OUTPATH_BUFFER_SIZE 1000
 
 /* Writes a graph instance to file. */
-int write_graph_instance(unsigned x0Max, char* graphInstancePath)
+int write_graph_instance(char* graphInstanceName,
+                         char* graphInstancePath)
 {
     /* Open the fragment to write to, clobbering any existing content. */
     FILE* graphInstanceFile;
@@ -25,7 +26,7 @@ int write_graph_instance(unsigned x0Max, char* graphInstancePath)
 
     /* Do it */
     fprintf(graphInstanceFile,
-"  <GraphInstance id=\"micromagnetics_1d_%u\"\n"
+"  <GraphInstance id=\"%s\"\n"
 "                 graphTypeId=\"micromagnetic_simulation_1d\">\n"
 "    <DeviceInstances>\n"
 "{{device_instances.xml}}"
@@ -33,7 +34,7 @@ int write_graph_instance(unsigned x0Max, char* graphInstancePath)
 "    <EdgeInstances>\n"
 "{{edge_instances.xml}}"
 "    </EdgeInstances>\n"
-"  </GraphInstance>", x0Max);
+"  </GraphInstance>", graphInstanceName);
 
     fclose(graphInstanceFile);
     return 0;
@@ -127,10 +128,9 @@ int write_instances(unsigned x0Max, char* deviceInstancePath,
 
 int main(int argc, char** argv)
 {
-
     char* unused;
-    char outputPath[OUTPATH_BUFFER_SIZE];  /* Holds computed default. */
-    unsigned x0Max;
+    char outputPath[OUTPATH_BUFFER_SIZE];
+    unsigned x0Max = strtoul(argv[1], &unused, 10);
 
     /* Expected arguments:
      *  - x0Max
@@ -140,16 +140,12 @@ int main(int argc, char** argv)
     if (argc < 2)
     {
         fprintf(stderr, "One argument is expected - the number of nodes. "
-                "Another argument is also accepted - the name of the file to "
-                "produce.\n");
+                "Another argument is also accepted - the name of the file "
+                "(and the graph instance) to produce.\n");
         return 1;
     }
 
-    x0Max = strtoul(argv[1], &unused, 10);
-    if (write_instances(x0Max, DEVICE_INSTANCE_FRAGMENT,
-                        EDGE_INSTANCE_FRAGMENT)) return 1;
-    if (write_graph_instance(x0Max, GRAPH_INSTANCE_FRAGMENT)) return 1;
-
+    /* Come up with a file/instance name. */
     if (argc < 3)
     {
         sprintf(outputPath, "micromagnetics_1d_%u.xml", x0Max);
@@ -157,6 +153,12 @@ int main(int argc, char** argv)
     }
     else
     {
-        return template_files(MICROMAGNETICS_TEMPLATE, argv[2]);
+        strcpy(outputPath, argv[2]);
     }
+
+    /* Make stuff. */
+    if (write_instances(x0Max, DEVICE_INSTANCE_FRAGMENT,
+                        EDGE_INSTANCE_FRAGMENT)) return 1;
+    if (write_graph_instance(outputPath, GRAPH_INSTANCE_FRAGMENT)) return 1;
+    return template_files(MICROMAGNETICS_TEMPLATE, outputPath);
 }
