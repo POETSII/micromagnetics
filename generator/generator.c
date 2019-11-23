@@ -72,13 +72,17 @@ int write_instances(unsigned x0Max, char* deviceInstancePath,
             state[bufferIndex] = 0;
         }
 
-        /* Edges connecting this device with the device x0-ahead. */
-        fprintf(edgeInstanceFile,
-                "<EdgeI path=\"%u:state_recv_x0minus-%u:state_push\"/>\n",
-                x0 + 1, x0);
-        fprintf(edgeInstanceFile,
-                "<EdgeI path=\"%u:state_recv_x0plus-%u:state_push\"/>\n",
-                x0, x0 + 1);
+        /* Edges connecting this device with the device x0-ahead (if there is
+         * one) */
+        if (x0 < x0Max)
+        {
+            fprintf(edgeInstanceFile,
+                    "<EdgeI path=\"%u:state_recv_x0minus-%u:state_push\"/>\n",
+                    x0 + 1, x0);
+            fprintf(edgeInstanceFile,
+                    "<EdgeI path=\"%u:state_recv_x0plus-%u:state_push\"/>\n",
+                    x0, x0 + 1);
+        }
 
         /* Supervisor edge. */
         fprintf(edgeInstanceFile,
@@ -92,11 +96,35 @@ int write_instances(unsigned x0Max, char* deviceInstancePath,
 
 int main(int argc, char** argv)
 {
-    unsigned x0Max = 99;
-    char outputPath[OUTPATH_BUFFER_SIZE];
-    sprintf(outputPath, "micromagnetics_1d_%u.xml", x0Max);
 
+    char* unused;
+    char outputPath[OUTPATH_BUFFER_SIZE];  /* Holds computed default. */
+    unsigned x0Max;
+
+    /* Expected arguments:
+     *  - x0Max
+     *  - optional: path to put the XML into */
+
+    /* Sanity. */
+    if (argc < 2)
+    {
+        fprintf(stderr, "One argument is expected - the number of nodes. "
+                "Another argument is also accepted - the name of the file to "
+                "produce.\n");
+        return 1;
+    }
+
+    x0Max = strtoul(argv[1], &unused, 10);
     if (write_instances(x0Max, DEVICE_INSTANCE_FRAGMENT,
                         EDGE_INSTANCE_FRAGMENT)) return 1;
-    return template_files(MICROMAGNETICS_TEMPLATE, outputPath);
+
+    if (argc < 3)
+    {
+        sprintf(outputPath, "micromagnetics_1d_%u.xml", x0Max);
+        return template_files(MICROMAGNETICS_TEMPLATE, outputPath);
+    }
+    else
+    {
+        return template_files(MICROMAGNETICS_TEMPLATE, argv[2]);
+    }
 }
