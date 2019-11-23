@@ -133,15 +133,16 @@ int main(int argc, char** argv)
     unsigned x0Max = strtoul(argv[1], &unused, 10);
 
     /* Expected arguments:
-     *  - x0Max
-     *  - optional: path to put the XML into */
+     * - x0Max
+     *
+     * - optional: path to put the XML into. */
 
     /* Sanity. */
     if (argc < 2)
     {
         fprintf(stderr, "One argument is expected - the number of nodes. "
-                "Another argument is also accepted - the name of the file "
-                "(and the graph instance) to produce.\n");
+                "Another argument is also accepted - the name of the file to "
+                "produce.\n");
         return 1;
     }
 
@@ -159,6 +160,7 @@ int main(int argc, char** argv)
     /* Make stuff. */
     if (write_instances(x0Max, DEVICE_INSTANCE_FRAGMENT,
                         EDGE_INSTANCE_FRAGMENT)) return 1;
-    if (write_graph_instance(outputPath, GRAPH_INSTANCE_FRAGMENT)) return 1;
+    if (write_graph_instance("micromagnetics",
+                             GRAPH_INSTANCE_FRAGMENT)) return 1;
     return template_files(MICROMAGNETICS_TEMPLATE, outputPath);
 }
