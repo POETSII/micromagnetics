@@ -3,3 +3,4 @@ templater
 micromagnetics_1d_20.xml
 fragments/instances/device_instances.xml
 fragments/instances/edge_instances.xml
+fragments/instances/graph_instance.xml

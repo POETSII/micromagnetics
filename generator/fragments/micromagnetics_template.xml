@@ -172,13 +172,5 @@ fclose(dataFile);
       </SupervisorDeviceType>
     </DeviceTypes>
   </GraphType>
-  <GraphInstance id="micromagnetics_1d_20"
-                 graphTypeId="micromagnetic_simulation_1d">
-    <DeviceInstances>
-{{instances/device_instances.xml}}
-    </DeviceInstances>
-    <EdgeInstances>
-{{instances/edge_instances.xml}}
-    </EdgeInstances>
-  </GraphInstance>
+{{instances/graph_instance.xml}}
 </Graphs>

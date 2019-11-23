@@ -4,11 +4,42 @@
 
 #define DEVICE_INSTANCE_FRAGMENT "fragments/instances/device_instances.xml"
 #define EDGE_INSTANCE_FRAGMENT "fragments/instances/edge_instances.xml"
+#define GRAPH_INSTANCE_FRAGMENT "fragments/instances/graph_instance.xml"
 #define MICROMAGNETICS_TEMPLATE "fragments/micromagnetics_template.xml"
 #define JSON_BUFFER_SIZE 1000
 #define OUTPATH_BUFFER_SIZE 1000
 
-/* Writes instances to a file. */
+/* Writes a graph instance to file. */
+int write_graph_instance(unsigned x0Max, char* graphInstancePath)
+{
+    /* Open the fragment to write to, clobbering any existing content. */
+    FILE* graphInstanceFile;
+    graphInstanceFile = fopen(graphInstancePath, "wb");
+    if (graphInstanceFile == NULL)
+    {
+        fprintf(stderr,
+                "Error opening output file '%s': %s.\n",
+                graphInstancePath, strerror(errno));
+        return 1;
+    }
+
+    /* Do it */
+    fprintf(graphInstanceFile,
+"  <GraphInstance id=\"micromagnetics_1d_%u\"\n"
+"                 graphTypeId=\"micromagnetic_simulation_1d\">\n"
+"    <DeviceInstances>\n"
+"{{device_instances.xml}}"
+"    </DeviceInstances>\n"
+"    <EdgeInstances>\n"
+"{{edge_instances.xml}}"
+"    </EdgeInstances>\n"
+"  </GraphInstance>", x0Max);
+
+    fclose(graphInstanceFile);
+    return 0;
+}
+
+/* Writes device and edge instances to a file. */
 int write_instances(unsigned x0Max, char* deviceInstancePath,
                     char* edgeInstancePath)
 {
@@ -117,6 +148,7 @@ int main(int argc, char** argv)
     x0Max = strtoul(argv[1], &unused, 10);
     if (write_instances(x0Max, DEVICE_INSTANCE_FRAGMENT,
                         EDGE_INSTANCE_FRAGMENT)) return 1;
+    if (write_graph_instance(x0Max, GRAPH_INSTANCE_FRAGMENT)) return 1;
 
     if (argc < 3)
     {
