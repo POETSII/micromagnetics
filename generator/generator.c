@@ -5,13 +5,15 @@
 #define DEVICE_INSTANCE_FRAGMENT "fragments/instances/device_instances.xml"
 #define EDGE_INSTANCE_FRAGMENT "fragments/instances/edge_instances.xml"
 #define GRAPH_INSTANCE_FRAGMENT "fragments/instances/graph_instance.xml"
-#define MICROMAGNETICS_TEMPLATE "fragments/micromagnetics_template.xml"
+#define MICROMAGNETICS_TEMPLATE_1D "fragments/micromagnetics_template_1d.xml"
+#define MICROMAGNETICS_TEMPLATE_2D "fragments/micromagnetics_template_2d.xml"
 #define JSON_BUFFER_SIZE 1000
 #define OUTPATH_BUFFER_SIZE 1000
 
 /* Writes a graph instance to file. */
 int write_graph_instance(char* graphInstanceName,
-                         char* graphInstancePath)
+                         char* graphInstancePath,
+                         char* graphType)
 {
     /* Open the fragment to write to, clobbering any existing content. */
     FILE* graphInstanceFile;
@@ -27,22 +29,22 @@ int write_graph_instance(char* graphInstanceName,
     /* Do it */
     fprintf(graphInstanceFile,
 "  <GraphInstance id=\"%s\"\n"
-"                 graphTypeId=\"micromagnetic_simulation_1d\">\n"
+"                 graphTypeId=\"%s\">\n"
 "    <DeviceInstances>\n"
 "{{device_instances.xml}}"
 "    </DeviceInstances>\n"
 "    <EdgeInstances>\n"
 "{{edge_instances.xml}}"
 "    </EdgeInstances>\n"
-"  </GraphInstance>", graphInstanceName);
+            "  </GraphInstance>", graphInstanceName, graphType);
 
     fclose(graphInstanceFile);
     return 0;
 }
 
 /* Writes device and edge instances to a file. */
-int write_instances(unsigned x0Max, char* deviceInstancePath,
-                    char* edgeInstancePath)
+int write_instances_1d(unsigned x0Max, char* deviceInstancePath,
+                       char* edgeInstancePath)
 {
     /* Create a properties staging area and a state staging area, used for each
      * iteration. */
@@ -129,41 +131,216 @@ int write_instances(unsigned x0Max, char* deviceInstancePath,
     return 0;
 }
 
-int main(int argc, char** argv)
+/* Writes device and edge instances to a file. */
+int write_instances_2d(unsigned x0Max, unsigned x1Max,
+                       char* deviceInstancePath, char* edgeInstancePath)
 {
-    char* unused;
-    char outputPath[OUTPATH_BUFFER_SIZE];
-    unsigned x0Max = strtoul(argv[1], &unused, 10);
+    /* Create a properties staging area and a state staging area, used for each
+     * iteration. */
+    char props[JSON_BUFFER_SIZE];
+    char state[JSON_BUFFER_SIZE];
+    unsigned bufferIndex;
 
-    /* Expected arguments:
-     * - x0Max
-     *
-     * - optional: path to put the XML into. */
+    /* Co-ordinates. */
+    unsigned x0;
+    unsigned x1;
 
-    /* Sanity. */
-    if (argc < 2)
+    /* Open the fragments to write to, clobbering any existing content. */
+    FILE* deviceInstanceFile;
+    FILE* edgeInstanceFile;
+    deviceInstanceFile = fopen(deviceInstancePath, "wb");
+    if (deviceInstanceFile == NULL)
     {
-        fprintf(stderr, "One argument is expected - the number of nodes. "
-                "Another argument is also accepted - the name of the file to "
-                "produce.\n");
+        fprintf(stderr,
+                "Error opening output file '%s': %s.\n",
+                deviceInstancePath, strerror(errno));
         return 1;
     }
 
-    /* Come up with a file/instance name. */
-    if (argc < 3)
+    edgeInstanceFile = fopen(edgeInstancePath, "wb");
+    if (edgeInstanceFile == NULL)
     {
-        sprintf(outputPath, "micromagnetics_1d_%u.xml", x0Max);
-        return template_files(MICROMAGNETICS_TEMPLATE, outputPath);
+        fprintf(stderr,
+                "Error opening output file '%s': %s.\n",
+                edgeInstancePath, strerror(errno));
+        fclose(deviceInstanceFile);
+        return 1;
+    }
+
+    /* Clear properties and state for device entries. */
+    for (bufferIndex = 0; bufferIndex < JSON_BUFFER_SIZE; bufferIndex++)
+    {
+        props[bufferIndex] = 0;
+        state[bufferIndex] = 0;
+    }
+
+    /* Iterate over each device. */
+    for (x0 = 0; x0 <= x0Max; x0++) for (x1 = 0; x1 <= x1Max; x1++)
+    {
+        /* Default properties */
+        sprintf(props, "\"x0\": %u, \"x1\": %u", x0, x1);
+
+        /* Initial conditions at the middle. */
+        if (x0 == x0Max/2 && x1 == x1Max/2)
+        {
+            strcpy(state, "\"m_x0\": 0.0, \"m_x1\": 0.0, \"m_x2\": -1.0");
+        }
+
+        /* Write the device entry. */
+        fprintf(deviceInstanceFile,
+                "<DevI id=\"%u_%u\" type=\"fd_point\">", x0, x1);
+        if (strlen(props) > 0) fprintf(deviceInstanceFile, "<P>%s</P>", props);
+        if (strlen(state) > 0) fprintf(deviceInstanceFile, "<S>%s</S>", state);
+        fprintf(deviceInstanceFile, "</DevI>\n");
+
+        /* Clear properties and state for device entries. */
+        for (bufferIndex = 0; bufferIndex < JSON_BUFFER_SIZE; bufferIndex++)
+        {
+            props[bufferIndex] = 0;
+            state[bufferIndex] = 0;
+        }
+
+        /* Edges connecting this device with the device x0-ahead (if there is
+         * one) */
+        if (x0 < x0Max)
+        {
+            fprintf(edgeInstanceFile,
+                    "<EdgeI path=\"%u_%u:state_recv_x0minus-%u_%u:state_push\"/>\n",
+                    x0 + 1, x1, x0, x1);
+            fprintf(edgeInstanceFile,
+                    "<EdgeI path=\"%u_%u:state_recv_x0plus-%u_%u:state_push\"/>\n",
+                    x0, x1, x0 + 1, x1);
+        }
+        else  /* Periodic! */
+        {
+            fprintf(edgeInstanceFile,
+                    "<EdgeI path=\"%u_%u:state_recv_x0minus-%u_%u:state_push\"/>\n",
+                    0, x1, x0, x1);
+            fprintf(edgeInstanceFile,
+                    "<EdgeI path=\"%u_%u:state_recv_x0plus-%u_%u:state_push\"/>\n",
+                    x0, x1, 0, x1);
+        }
+
+        /* Edges connecting this device with the device x1-ahead (if there is
+         * one) */
+        if (x1 < x1Max)
+        {
+            fprintf(edgeInstanceFile,
+                    "<EdgeI path=\"%u_%u:state_recv_x1minus-%u_%u:state_push\"/>\n",
+                    x0, x1 + 1, x0, x1);
+            fprintf(edgeInstanceFile,
+                    "<EdgeI path=\"%u_%u:state_recv_x1plus-%u_%u:state_push\"/>\n",
+                    x0, x1, x0, x1 + 1);
+        }
+        else  /* Periodic! */
+        {
+            fprintf(edgeInstanceFile,
+                    "<EdgeI path=\"%u_%u:state_recv_x1minus-%u_%u:state_push\"/>\n",
+                    x0, 0, x0, x1);
+            fprintf(edgeInstanceFile,
+                    "<EdgeI path=\"%u_%u:state_recv_x1plus-%u_%u:state_push\"/>\n",
+                    x0, x1, x0, 0);
+        }
+
+        /* Supervisor edge. */
+        fprintf(edgeInstanceFile,
+                "<EdgeI path=\":exfiltrate-%u_%u:exfiltrate\"/>\n", x0, x1);
+    }
+
+    fclose(deviceInstanceFile);
+    fclose(edgeInstanceFile);
+    return 0;
+}
+
+/* Populates x0Max, x1Max, and outputPath based of argc and argv.  */
+int parse_args(int argc, char** argv,
+                unsigned* x0Max, unsigned* x1Max, char* outputPath)
+{
+    char* unused;
+    const char* help = \
+"There are four valid forms for specifying input arguments:\n\n"
+"  1d, default output:\n"
+"      - unsigned (>0): x0Max\n"
+"      - string (optional): outputPath (a default is used if not defined).\n\n"
+"      (sets x1Max to zero)\n\n"
+"  2d, default output:\n"
+"      - unsigned (>0): x0Max\n"
+"      - unsigned (>0): x1Max\n"
+"      - string (optional): outputPath (a default is used if not defined).\n";
+
+    /* Sanity checking on argument count. */
+    if (argc < 2 || argc > 4)
+    {
+        fprintf(stderr, "%s", help);
+        return 1;
+    }
+
+    /* Attempt to grab x0Max. */
+    unused = 0;
+    *x0Max = strtoul(argv[1], &unused, 10);
+    if (*x0Max == 0)
+    {
+        fprintf(stderr, "%s", help);
+        return 1;
+    }
+
+    /* Set defaults for one (real) input. */
+    if (argc == 2)
+    {
+        *x1Max = 0;
+        sprintf(outputPath, "micromagnetics_1d_%u.xml", *x0Max);
+        return 1;
+    }
+
+    /* Attempt to grab x1Max. */
+    *x1Max = strtoul(argv[2], &unused, 10);
+
+    /* If it was invalid, assume it was an output path for the 1D case. */
+    if (*x1Max == 0)
+    {
+        strcpy(outputPath, argv[2]);
+        return 0;
+    }
+
+    /* Now we're in the realm of 2D: check for an outputPath. */
+    if (argc == 4)
+    {
+        strcpy(outputPath, argv[3]);
+        return 0;
     }
     else
     {
-        strcpy(outputPath, argv[2]);
+        sprintf(outputPath, "micromagnetics_2d_%u_%u.xml", *x0Max, *x1Max);
+        return 1;
     }
+}
+
+int main(int argc, char** argv)
+{
+    /* Parse arguments (see parse_args documentation). */
+    unsigned x0Max;
+    unsigned x1Max;
+    char outputPath[OUTPATH_BUFFER_SIZE];
+    if(parse_args(argc, argv, &x0Max, &x1Max, outputPath)) return 1;
 
     /* Make stuff. */
-    if (write_instances(x0Max, DEVICE_INSTANCE_FRAGMENT,
-                        EDGE_INSTANCE_FRAGMENT)) return 1;
-    if (write_graph_instance("micromagnetics",
-                             GRAPH_INSTANCE_FRAGMENT)) return 1;
-    return template_files(MICROMAGNETICS_TEMPLATE, outputPath);
+    if (x1Max == 0)  /* 1D */
+    {
+        if (write_instances_1d(x0Max, DEVICE_INSTANCE_FRAGMENT,
+                               EDGE_INSTANCE_FRAGMENT)) return 1;
+        if (write_graph_instance("micromagnetics",
+                                 GRAPH_INSTANCE_FRAGMENT,
+                                 "micromagnetic_simulation_1d")) return 1;
+        return template_files(MICROMAGNETICS_TEMPLATE_1D, outputPath);
+    }
+
+    else  /* 2D */
+    {
+        if (write_instances_2d(x0Max, x1Max, DEVICE_INSTANCE_FRAGMENT,
+                               EDGE_INSTANCE_FRAGMENT)) return 1;
+        if (write_graph_instance("micromagnetics",
+                                 GRAPH_INSTANCE_FRAGMENT,
+                                 "micromagnetic_simulation_2d")) return 1;
+        return template_files(MICROMAGNETICS_TEMPLATE_2D, outputPath);
+    }
 }

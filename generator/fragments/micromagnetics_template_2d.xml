@@ -1,0 +1,203 @@
+<?xml version="1.0"?>
+<!--
+    This XML is a template that describes two-dimensional micromagnetic
+    simulation. It is to be populated with a series of files found in moustache
+    brackets (two sequent '{' characters, and two sequent '}' characters,
+    without quotes). The idea being that the generator populates fields in this
+    XML file with information.
+
+    If this is a POETS-ready XML (i.e. it's gone through the generator), this
+    file should not contain any moustache brackets.
+-->
+
+<Graphs xmlns="https://poets-project.org/schemas/virtual-graph-schema-v2">
+  <GraphType id="micromagnetic_simulation_2d">
+    <MessageTypes>
+      <MessageType id="dummy"/> <!-- Used for dummy pin handlers. -->
+      <MessageType id="state">
+        <Message>
+          <Scalar type="float" name="m_x0"/>
+          <Scalar type="float" name="m_x1"/>
+          <Scalar type="float" name="m_x2"/>
+          <Scalar type="uint32_t" name="iteration"/>
+        </Message>
+      </MessageType>
+      <MessageType id="exfiltration">
+        <Message>
+          <Scalar type="uint16_t" name="x0"/>
+          <Scalar type="uint16_t" name="x1"/>
+          <Scalar type="float" name="m_x0"/>
+          <Scalar type="float" name="m_x1"/>
+          <Scalar type="float" name="m_x2"/>
+          <Scalar type="uint32_t" name="iteration"/>
+        </Message>
+      </MessageType>
+    </MessageTypes>
+    <DeviceTypes>
+      <DeviceType id="fd_point">
+        <Properties>
+          <!-- Where am I? (for the Supervisor's benefit) -->
+          <Scalar type="uint16_t" name="x0"/>
+          <Scalar type="uint16_t" name="x1"/>
+
+          <!-- Effective field coefficients, including the time differential
+               and scalaing parameters to ease the burden on the
+               FPU. Currently:
+
+               - exchange_coeff = 2*A*(dt)*gamma/h/mu_0/Ms
+               - dmi_coeff = D*(dt)*gamma/2/h/mu_0/Ms
+               - zeeman_coeff = -H*(dt)*gamma
+
+               Using:
+
+               - A = 4e-13 [J][m-1]
+               - D = 2.7e-4 [J][m-2]
+               - Ms = 9.5e4 [A][m-1]
+               - mu_0 = 4e-7 * pi [kg][s-2][A-2]
+               - H = 15.4 * Ms (or zero)
+               - dt = 1e-13 [s]
+               - h = 1e-9 [m]
+               - gamma = 2.211e5 [A][s][kg-1]
+               - alpha / (1 + alpha^2) = 1  (unity Gilbert damping coefficient)
+
+               Zeeman field is in the (0, 0, 1) direction when H is positive.
+          -->
+          <Scalar type="float" name="exchange_coeff_dt" default="-1.148e-10"/>
+          <Scalar type="float" name="dmi_coeff_dt" default="2.499e-2"/>
+          <Scalar type="float" name="zeeman_coeff_dt" default="-3.239e-2"/>
+        </Properties>
+        <State>
+          <Scalar type="uint8_t" name="did_we_just_update" default="0"/>
+
+          <!-- "Our" state. Note that "iteration" starts at one; this is to
+               stop us stepping forward before receiving our neighbours'
+               initial states (which begin at zero).
+
+               Also, all spins are pointing straight up, unless otherwise
+               stated. -->
+          <Scalar type="uint32_t" name="iteration" default="1"/>
+          <Scalar type="float" name="m_x0" default="0.0"/>
+          <Scalar type="float" name="m_x1" default="0.0"/>
+          <Scalar type="float" name="m_x2" default="1.0"/>
+
+          <!-- Have we sent our initial packet to anyone? -->
+          <Scalar type="uint8_t" name="is_initialised" default="0"/>
+
+          <!-- The state of our neighbours (x0plus and x0minus, and x1plus and
+               x1minus) -->
+          <Scalar type="uint32_t" name="iteration_x0plus" default="0"/>
+          <Scalar type="float" name="m_x0_x0plus_even" default="0.0"/>
+          <Scalar type="float" name="m_x1_x0plus_even" default="0.0"/>
+          <Scalar type="float" name="m_x2_x0plus_even" default="0.0"/>
+          <Scalar type="float" name="m_x0_x0plus_odd" default="0.0"/>
+          <Scalar type="float" name="m_x1_x0plus_odd" default="0.0"/>
+          <Scalar type="float" name="m_x2_x0plus_odd" default="0.0"/>
+
+          <Scalar type="uint32_t" name="iteration_x0minus" default="0"/>
+          <Scalar type="float" name="m_x0_x0minus_even" default="0.0"/>
+          <Scalar type="float" name="m_x1_x0minus_even" default="0.0"/>
+          <Scalar type="float" name="m_x2_x0minus_even" default="0.0"/>
+          <Scalar type="float" name="m_x0_x0minus_odd" default="0.0"/>
+          <Scalar type="float" name="m_x1_x0minus_odd" default="0.0"/>
+          <Scalar type="float" name="m_x2_x0minus_odd" default="0.0"/>
+
+          <Scalar type="uint32_t" name="iteration_x1plus" default="0"/>
+          <Scalar type="float" name="m_x0_x1plus_even" default="0.0"/>
+          <Scalar type="float" name="m_x1_x1plus_even" default="0.0"/>
+          <Scalar type="float" name="m_x2_x1plus_even" default="0.0"/>
+          <Scalar type="float" name="m_x0_x1plus_odd" default="0.0"/>
+          <Scalar type="float" name="m_x1_x1plus_odd" default="0.0"/>
+          <Scalar type="float" name="m_x2_x1plus_odd" default="0.0"/>
+
+          <Scalar type="uint32_t" name="iteration_x1minus" default="0"/>
+          <Scalar type="float" name="m_x0_x1minus_even" default="0.0"/>
+          <Scalar type="float" name="m_x1_x1minus_even" default="0.0"/>
+          <Scalar type="float" name="m_x2_x1minus_even" default="0.0"/>
+          <Scalar type="float" name="m_x0_x1minus_odd" default="0.0"/>
+          <Scalar type="float" name="m_x1_x1minus_odd" default="0.0"/>
+          <Scalar type="float" name="m_x2_x1minus_odd" default="0.0"/>
+
+        </State>
+        <ReadyToSend><![CDATA[
+{{fd_point_rts.c}}
+        ]]></ReadyToSend>
+
+        <OnCompute><![CDATA[
+{{fd_point_on_compute.c}}
+        ]]></OnCompute>
+
+        <!-- Here is a dummy input pin because people can't talk to each other,
+             so we have a bodge where, because the handler of the first input
+             pin is called on initialisation, we create a dummy.
+
+             Talk to GMB, who also says "just use the init handler". -->
+        <InputPin name="dummy" messageTypeId="dummy">
+          <OnReceive><![CDATA[
+/* I'm a dummy pin handler, and I'll never be called or used! Laziness is my
+ * ideal lifestyle, and I like walking in the rain. */
+          ]]></OnReceive>
+        </InputPin>
+
+        <!-- Getting the word out to our neighbours. -->
+        <OutputPin name="state_push" messageTypeId="state">
+          <OnSend><![CDATA[
+{{populate_state_message.c}}
+          ]]></OnSend>
+        </OutputPin>
+
+        <!-- Getting the word out to the supervisor. -->
+        <OutputPin name="exfiltrate" messageTypeId="exfiltration">
+          <OnSend><![CDATA[
+{{populate_exfiltration_message_2d.c}}
+          ]]></OnSend>
+        </OutputPin>
+
+        <!-- Receiving the word from our neighbours. -->
+        <InputPin name="state_recv_x0plus" messageTypeId="state">
+          <OnReceive><![CDATA[
+{{fd_point_recv_x0plus.c}}
+{{check_increment_state_2d.c}}
+          ]]></OnReceive>
+        </InputPin>
+
+        <InputPin name="state_recv_x0minus" messageTypeId="state">
+          <OnReceive><![CDATA[
+{{fd_point_recv_x0minus.c}}
+{{check_increment_state_2d.c}}
+          ]]></OnReceive>
+        </InputPin>
+
+        <InputPin name="state_recv_x1plus" messageTypeId="state">
+          <OnReceive><![CDATA[
+{{fd_point_recv_x1plus.c}}
+{{check_increment_state_2d.c}}
+          ]]></OnReceive>
+        </InputPin>
+
+        <InputPin name="state_recv_x1minus" messageTypeId="state">
+          <OnReceive><![CDATA[
+{{fd_point_recv_x1minus.c}}
+{{check_increment_state_2d.c}}
+          ]]></OnReceive>
+        </InputPin>
+      </DeviceType>
+
+      <SupervisorDeviceType id="supervisor">
+        <Code><![CDATA[
+#include <stdio.h>
+        ]]></Code>
+        <InputPin name="exfiltrate" messageTypeId="exfiltration">
+          <OnReceive><![CDATA[
+FILE* dataFile;
+dataFile = fopen("micromagnetics.tsv", "a");
+fprintf(dataFile, "%u\t%u\t%u\t%f\t%f\t%f\n",
+        message->x0, message->x1, message->iteration,
+        message->m_x0, message->m_x1, message->m_x2);
+fclose(dataFile);
+          ]]></OnReceive>
+        </InputPin>
+      </SupervisorDeviceType>
+    </DeviceTypes>
+  </GraphType>
+{{instances/graph_instance.xml}}
+</Graphs>

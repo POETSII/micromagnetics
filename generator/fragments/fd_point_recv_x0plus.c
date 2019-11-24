@@ -11,4 +11,3 @@ else
     deviceState->m_x1_x0plus_even = message->m_x1;
     deviceState->m_x2_x0plus_even = message->m_x2;
 }
-{{check_increment_state_1d.c}}

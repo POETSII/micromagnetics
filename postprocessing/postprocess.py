@@ -12,17 +12,18 @@ def doit():
     if (dimensionality == 1):
         df.columns = ["x0", "iteration", "m0", "m1", "m2"]
         df = df.sort_values(by=["x0"])
-        numberOfPoints = df["x0"].max()
+        numberOfPoints = df["x0"].max() + 1
 
     elif (dimensionality == 2):
         df.columns = ["x0", "x1", "iteration", "m0", "m1", "m2"]
         df = df.sort_values(by=["x0", "x1"])
-        numberOfPoints = df["x0"].max() * df["x1"].max()
+        numberOfPoints = (df["x0"].max() + 1) * (df["x1"].max() + 1)
 
     else:
         df.columns = ["x0", "x1", "x2", "iteration", "m0", "m1", "m2"]
         df = df.sort_values(by=["x0", "x1", "x2"])
-        numberOfPoints = df["x0"].max() * df["x1"].max() * df["x2"].max()
+        numberOfPoints = (df["x0"].max() + 1) *\
+          (df["x1"].max() + 1) * (df["x2"].max() + 1)
 
     # "Normalise" by iteration count - the supervisor only accepts computation
     # every eight states.
@@ -41,8 +42,8 @@ def doit():
     mlab.options.offscreen = True
     backgroundColour = (0., 0., 0.)
 
-    #for iteration in [iterationEnd]:
-    for iteration in range(1, iterationEnd):
+    for iteration in [iterationEnd]:
+    #for iteration in range(1, iterationEnd):
         thisIteration = df.query("iteration == {}".format(iteration))
 
         # Cone values
@@ -86,8 +87,8 @@ def doit():
 
         # Display
         #mlab.show()
-        mlab.savefig("out_{0:06d}.png".format(iteration), magnification=4)
-        #mlab.savefig("out.png", magnification=4)
+        #mlab.savefig("out_{0:06d}.png".format(iteration), magnification=4)
+        mlab.savefig("out.png", magnification=4)
 
         # Close the figure we've opened.
         mlab.close()

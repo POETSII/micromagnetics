@@ -4,10 +4,7 @@
     simulation. It is to be populated with a series of files found in moustache
     brackets (two sequent '{' characters, and two sequent '}' characters,
     without quotes). The idea being that the generator populates fields in this
-    XML file with information, including:
-
-     - Energy terms, and their governing coefficients.
-     - Initial conditions.
+    XML file with information.
 
     If this is a POETS-ready XML (i.e. it's gone through the generator), this
     file should not contain any moustache brackets.
@@ -27,7 +24,7 @@
       </MessageType>
       <MessageType id="exfiltration">
         <Message>
-          <Scalar type="uint8_t" name="x0"/>
+          <Scalar type="uint16_t" name="x0"/>
           <Scalar type="float" name="m_x0"/>
           <Scalar type="float" name="m_x1"/>
           <Scalar type="float" name="m_x2"/>
@@ -39,7 +36,7 @@
       <DeviceType id="fd_point">
         <Properties>
           <!-- Where am I? (for the Supervisor's benefit) -->
-          <Scalar type="uint8_t" name="x0"/>
+          <Scalar type="uint16_t" name="x0"/>
 
           <!-- Effective field coefficients, including the time differential
                and scalaing parameters to ease the burden on the
@@ -134,20 +131,22 @@
         <!-- Getting the word out to the supervisor. -->
         <OutputPin name="exfiltrate" messageTypeId="exfiltration">
           <OnSend><![CDATA[
-{{populate_exfiltration_message.c}}
+{{populate_exfiltration_message_1d.c}}
           ]]></OnSend>
         </OutputPin>
 
         <!-- Receiving the word from our neighbours. -->
         <InputPin name="state_recv_x0plus" messageTypeId="state">
           <OnReceive><![CDATA[
-{{fd_point_recv_x0plus_1d.c}}
+{{fd_point_recv_x0plus.c}}
+{{check_increment_state_1d.c}}
           ]]></OnReceive>
         </InputPin>
 
         <InputPin name="state_recv_x0minus" messageTypeId="state">
           <OnReceive><![CDATA[
-{{fd_point_recv_x0minus_1d.c}}
+{{fd_point_recv_x0minus.c}}
+{{check_increment_state_1d.c}}
           ]]></OnReceive>
         </InputPin>
       </DeviceType>
