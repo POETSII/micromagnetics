@@ -1,14 +1,9 @@
 <?xml version="1.0"?>
 <!--
-    This XML is a template that describes one-dimensional micromagnetic
-    simulation. It is to be populated with a series of files found in moustache
-    brackets (two sequent '{' characters, and two sequent '}' characters,
-    without quotes). The idea being that the generator populates fields in this
-    XML file with information.
+This XML is a template that describes one-dimensional micromagnetic simulation,
+which may have been populated.
 
-    If this is a POETS-ready XML (i.e. it's gone through the generator), this
-    file should not contain any moustache brackets.
--->
+{{preamble.txt}}-->
 
 <Graphs xmlns="https://poets-project.org/schemas/virtual-graph-schema-v2">
   <GraphType id="micromagnetic_simulation_1d">
