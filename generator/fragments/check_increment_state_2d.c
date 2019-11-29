@@ -75,11 +75,11 @@ if (goingToUpdate == 1)
 
     /* Compute exchange field, multiplied by the time differential dt and other
      * scaling constants. */
-    h_eff_dt_x0 = deviceProperties->exchange_coeff_dt *
+    h_eff_dt_x0 = -deviceProperties->exchange_coeff_dt *
         (m_x0_x0plus + m_x0_x0minus + m_x0_x1plus + m_x0_x1minus);
-    h_eff_dt_x1 = deviceProperties->exchange_coeff_dt *
+    h_eff_dt_x1 = -deviceProperties->exchange_coeff_dt *
         (m_x1_x0plus + m_x1_x0minus + m_x1_x1plus + m_x1_x1minus);
-    h_eff_dt_x2 = deviceProperties->exchange_coeff_dt *
+    h_eff_dt_x2 = -deviceProperties->exchange_coeff_dt *
         (m_x2_x0plus + m_x2_x0minus + m_x2_x1plus + m_x2_x1minus);
 
     /* Stir in a little DMI in a similar way (it's a cross product, and since
@@ -94,15 +94,15 @@ if (goingToUpdate == 1)
      * h_eff_dt_x2 += deviceProperties->dmi_coeff_dt *
      *     (m_x1_x0minus - m_x1_x0plus - m_x0_x1plus + m_x0_x1minus);
      */
-    h_eff_dt_x0 += deviceProperties->dmi_coeff_dt *
+    h_eff_dt_x0 -= deviceProperties->dmi_coeff_dt *
         (m_x2_x1plus - m_x2_x1minus);
-    h_eff_dt_x1 += deviceProperties->dmi_coeff_dt *
+    h_eff_dt_x1 -= deviceProperties->dmi_coeff_dt *
         (m_x2_x0plus - m_x2_x0minus);
-    h_eff_dt_x2 += deviceProperties->dmi_coeff_dt *
+    h_eff_dt_x2 -= deviceProperties->dmi_coeff_dt *
         (m_x1_x0minus - m_x1_x0plus - m_x0_x1plus + m_x0_x1minus);
 
     /* Zeeman energy (influence of big external magnet). */
-    h_eff_dt_x2 += deviceProperties->zeeman_coeff_dt;
+    h_eff_dt_x2 -= deviceProperties->zeeman_coeff_dt;
 
     /* Precessionless LLG, with Euler (see p30 of MLV's thesis) */
     m_dot_h_dt = (deviceState->m_x0 * h_eff_dt_x0) +
