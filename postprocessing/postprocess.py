@@ -4,7 +4,7 @@ from mayavi import mlab
 import pandas as pd
 
 def doit():
-    df = pd.read_csv("micromagnetics.tsv", sep='\t',)
+    df = pd.read_csv("micromagnetics.csv")
 
     # Figure out if this is a 1d, 2d, or 3d(!) plot. Pandas will shout if it
     # doesn't fit. Also precompute the size of the domain.

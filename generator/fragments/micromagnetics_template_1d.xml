@@ -153,8 +153,8 @@ which may have been populated.
         <InputPin name="exfiltrate" messageTypeId="exfiltration">
           <OnReceive><![CDATA[
 FILE* dataFile;
-dataFile = fopen("micromagnetics.tsv", "a");
-fprintf(dataFile, "%u\t%u\t%f\t%f\t%f\n",
+dataFile = fopen("micromagnetics.csv", "a");
+fprintf(dataFile, "%u,%u,%f,%f,%f\n",
 message->x0, message->iteration, message->m_x0, message->m_x1, message->m_x2);
 fclose(dataFile);
           ]]></OnReceive>
