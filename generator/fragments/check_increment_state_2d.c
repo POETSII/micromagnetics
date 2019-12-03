@@ -25,7 +25,7 @@ float m_x2_x1minus;
 
 float dm_x0;  /* The magnetic moment field differential for this... */
 float dm_x1;  /* iteration, derived from Euler updating, in the x0, x1, and */
-float dm_x2;  /* x2 directions in the codomain.
+float dm_x2;  /* x2 directions in the codomain. */
 
 float m_dot_h_dt;
 float target;
