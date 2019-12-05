@@ -353,14 +353,9 @@ int parse_args(int argc, char** argv,
     }
 }
 
-int main(int argc, char** argv)
+/* The meat and potatoes - made externally available in shared-object land. */
+int do_it(unsigned x0Max, unsigned x1Max, char* outputPath)
 {
-    /* Parse arguments (see parse_args documentation). */
-    unsigned x0Max;
-    unsigned x1Max;
-    char outputPath[OUTPATH_BUFFER_SIZE];
-    if(parse_args(argc, argv, &x0Max, &x1Max, outputPath)) return 1;
-
     /* Make stuff. */
     write_parameters(x0Max * x1Max, FINAL_ITERATION);
     if (x1Max == 0)  /* 1D */
@@ -382,4 +377,13 @@ int main(int argc, char** argv)
                                  "micromagnetic_simulation_2d")) return 1;
         return template_files(MICROMAGNETICS_TEMPLATE_2D, outputPath);
     }
+}
+
+int main(int argc, char** argv)
+{
+    unsigned x0Max;
+    unsigned x1Max;
+    char outputPath[OUTPATH_BUFFER_SIZE];
+    if(parse_args(argc, argv, &x0Max, &x1Max, outputPath)) return 1;
+    return do_it(x0Max, x1Max, outputPath);
 }
