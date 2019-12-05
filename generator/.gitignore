@@ -1,5 +1,6 @@
 generator
 templater
+*.so
 micromagnetics_1d.xml
 micromagnetics_2d.xml
 fragments/instances/*.xml
