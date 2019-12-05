@@ -7,8 +7,11 @@
 #define GRAPH_INSTANCE_FRAGMENT "fragments/instances/graph_instance.xml"
 #define MICROMAGNETICS_TEMPLATE_1D "fragments/micromagnetics_template_1d.xml"
 #define MICROMAGNETICS_TEMPLATE_2D "fragments/micromagnetics_template_2d.xml"
+#define DEVICE_COUNT_PARAMETER_FRAGMENT "fragments/parameters/node_count.txt"
+#define FINAL_ITERATION_PARAMETER_FRAGMENT "fragments/parameters/final_iteration.txt"
 #define JSON_BUFFER_SIZE 1000
 #define OUTPATH_BUFFER_SIZE 1000
+#define FINAL_ITERATION 10000  /* Given dt=1e-13, this represents t=1e-9 */
 
 /* Writes a graph instance to file. */
 int write_graph_instance(char* graphInstanceName,
@@ -252,6 +255,41 @@ int write_instances_2d(unsigned x0Max, unsigned x1Max,
     return 0;
 }
 
+/* Defines parameters for the templating engine. */
+int write_parameters(unsigned numberOfDevices, unsigned stoppingIteration)
+{
+    /* Open the fragments to write to, clobbering any existing content. */
+    FILE* deviceCountFile;
+    FILE* finalIterationFile;
+    deviceCountFile = fopen(DEVICE_COUNT_PARAMETER_FRAGMENT, "wb");
+    if (deviceCountFile == NULL)
+    {
+        fprintf(stderr,
+                "Error opening output file '%s': %s.\n",
+                DEVICE_COUNT_PARAMETER_FRAGMENT, strerror(errno));
+        return 1;
+    }
+
+    finalIterationFile = fopen(FINAL_ITERATION_PARAMETER_FRAGMENT, "wb");
+    if (finalIterationFile == NULL)
+    {
+        fprintf(stderr,
+                "Error opening output file '%s': %s.\n",
+                FINAL_ITERATION_PARAMETER_FRAGMENT, strerror(errno));
+        fclose(deviceCountFile);
+        return 1;
+    }
+
+    /* Do it. */
+    fprintf(deviceCountFile, "%u", numberOfDevices);
+    fprintf(finalIterationFile, "%u", stoppingIteration);
+
+    /* Good bye! */
+    fclose(deviceCountFile);
+    fclose(finalIterationFile);
+    return 0;
+}
+
 /* Populates x0Max, x1Max, and outputPath based of argc and argv.  */
 int parse_args(int argc, char** argv,
                 unsigned* x0Max, unsigned* x1Max, char* outputPath)
@@ -324,6 +362,7 @@ int main(int argc, char** argv)
     if(parse_args(argc, argv, &x0Max, &x1Max, outputPath)) return 1;
 
     /* Make stuff. */
+    write_parameters(x0Max * x1Max, FINAL_ITERATION);
     if (x1Max == 0)  /* 1D */
     {
         if (write_instances_1d(x0Max, DEVICE_INSTANCE_FRAGMENT,

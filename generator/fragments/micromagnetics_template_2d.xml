@@ -180,16 +180,72 @@ which may have been populated.
 
       <SupervisorDeviceType id="supervisor">
         <Code><![CDATA[
+#include <ctime>
 #include <stdio.h>
         ]]></Code>
         <InputPin name="exfiltrate" messageTypeId="exfiltration">
+          <Properties>
+            <!-- Devices will continue to compute until forcefully stopped.
+                 We're interested in "stopping" the simulation when simulated
+                 time reaches a certain value (or specifically, when the
+                 iteration counter reaches a certain value). These properties
+                 are defined by the generator.
+
+                  - nodeCount: Number of runners to expect.
+                  - finishLine: Where the finish line is (how many iterations)
+            -->
+            <Scalar type="uint32_t" name="nodeCount"
+                    default="{{parameters/node_count.txt}}"/>
+            <Scalar type="uint32_t" name="finishLine"
+                    default="{{parameters/final_iteration.txt}}"/>
+          </Properties>
+          <State>
+            <!-- We start timing when the first message is received from a
+                 compute device. We stop timing when the last device crosses
+                 the finish line.
+            -->
+            <Scalar type="uint32_t" name="nodesFinished" default="0"/>
+            <Scalar type="uint8_t" name="hasTimerStarted" default="0"/>
+          </State>
           <OnReceive><![CDATA[
+/* Start timer, if this is the first exfiltration message we have received. */
+if (sEdgeState->hasTimerStarted == 0)
+{
+    FILE* timeFile;
+    timeFile = fopen("micromagnetics_timing.txt", "a")
+    time_t timeNtv;  /* "Native" */
+    time(&timeNtv);
+    char timeBuf[sizeof "YYYY-MM-DDTHH:MM:SS"];
+    strftime(timeBuf, sizeof timeBuf, "%FT%T", localtime(&timeNtv));
+    fprintf("startTime: %s\n", timeBuf);
+    sEdgeState->hasTimerStarted = 1;
+}
+
+/* Write exfiltrated data to file. */
 FILE* dataFile;
 dataFile = fopen("micromagnetics.csv", "a");
 fprintf(dataFile, "%u,%u,%u,%f,%f,%f\n",
         message->x0, message->x1, message->iteration,
         message->m_x0, message->m_x1, message->m_x2);
 fclose(dataFile);
+
+/* Has this device just crossed the finish line? If so, count it. */
+if (message->iteration == sEdgeProperties->finishLine)
+{
+    sEdgeState->nodesFinished++;
+}
+
+/* Stop timer, if this is the last device to cross the finish line. */
+if (sEdgeState->nodesFinished >= sEdgeProperties->nodeCount)
+{
+    FILE* timeFile;
+    timeFile = fopen("micromagnetics_timing.txt", "a")
+    time_t timeNtv;  /* "Native" */
+    time(&timeNtv);
+    char timeBuf[sizeof "YYYY-MM-DDTHH:MM:SS"];
+    strftime(timeBuf, sizeof timeBuf, "%FT%T", localtime(&timeNtv));
+    fprintf("endTime: %s\n", timeBuf);
+}
           ]]></OnReceive>
         </InputPin>
       </SupervisorDeviceType>
