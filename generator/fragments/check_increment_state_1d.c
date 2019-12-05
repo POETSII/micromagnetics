@@ -1,24 +1,7 @@
 /* Now we need to check if our neighbours satisfy the update condition. If they
  * do, we update our state. */
-uint8_t goingToUpdate;
-float h_eff_dt_x0;
-float h_eff_dt_x1;
-float h_eff_dt_x2;
-float m_x0_x0plus;
-float m_x1_x0plus;
-float m_x2_x0plus;
-float m_x0_x0minus;
-float m_x1_x0minus;
-float m_x2_x0minus;
-float dm_x0;
-float dm_x1;
-float dm_x2;
-float m_dot_h_dt;
-float target;
-union {
-    float f;
-    uint32_t i;
-} fisr;
+
+{{check_increment_vars_1d.c}}
 
 goingToUpdate = 1;  /* Innocent until proven guilty. */
 if (deviceState->iteration_x0plus < deviceState->iteration) goingToUpdate = 0;
@@ -56,10 +39,21 @@ if (goingToUpdate == 1)
 
     /* Stir in a little DMI in a similar way (it's a cross product, and since
      * we're in 1d, there's no x1 differential and no x2 differential, so
-     * there's no x0 contribution by DMI to the effective field). */
-    h_eff_dt_x1 += deviceProperties->dmi_coeff_dt *
+     * there's no x0 contribution by DMI to the effective field).
+     *
+     *
+     * NB: For 3D, this becomes (I think):
+     *
+     * h_eff_dt_x0 += deviceProperties->dmi_coeff_dt *
+     *     (m_x2_x1plus - m_x2_x1minus - m_x1_x2plus + m_x1_x2minus);
+     * h_eff_dt_x1 += deviceProperties->dmi_coeff_dt *
+     *     (m_x0_x2plus - m_x0_x2minus + m_x2_x0plus - m_x2_x0minus);
+     * h_eff_dt_x2 += deviceProperties->dmi_coeff_dt *
+     *     (m_x1_x0minus - m_x1_x0plus - m_x0_x1plus + m_x0_x1minus);
+     */
+    h_eff_dt_x1 -= deviceProperties->dmi_coeff_dt *
         (m_x2_x0plus - m_x2_x0minus);
-    h_eff_dt_x2 += deviceProperties->dmi_coeff_dt *
+    h_eff_dt_x2 -= deviceProperties->dmi_coeff_dt *
         (m_x1_x0minus - m_x1_x0plus);
 
     /* Zeeman energy (influence of big external magnet). */
@@ -81,19 +75,7 @@ if (goingToUpdate == 1)
     deviceState->m_x1 = deviceState->m_x1 + dm_x1;
     deviceState->m_x2 = deviceState->m_x2 + dm_x2;
 
-    /* Normalise using Fast Inverse Square Root. Never thought I'd need this
-     * again! Two Newton-Raphson iterations gets us to e-6 accuracy at
-     * |m|=1. */
-    target = (deviceState->m_x0 * deviceState->m_x0) +
-        (deviceState->m_x1 * deviceState->m_x1) +
-        (deviceState->m_x2 * deviceState->m_x2);
-    fisr = {target};
-    fisr.i = 0x5f3759df - ( fisr.i >> 1 );
-    fisr.f *= (1.5 - ( target * 0.5 * fisr.f * fisr.f));  // First NR
-    fisr.f *= (1.5 - ( target * 0.5 * fisr.f * fisr.f));  // Second NR
-    deviceState->m_x0 *= fisr.f;
-    deviceState->m_x1 *= fisr.f;
-    deviceState->m_x2 *= fisr.f;
+{{normalise_fisr.c}}
 
     /* We did it! This variable notifies the ReadyToSend (RTS) handler that
      * we've just updated. Once read, the output pin handler will set this to
