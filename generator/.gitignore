@@ -1,7 +1,8 @@
 generator
 templater
 *.so
-micromagnetics_1d.xml
-micromagnetics_2d.xml
+micromagnetic_simulation.xml
 fragments/instances/*.xml
 fragments/parameters/*.txt
+.ipynb_checkpoints/
+__pycache__/
