@@ -178,13 +178,14 @@ which may have been populated.
 if (sEdgeState->hasTimerStarted == 0)
 {
     FILE* timeFile;
-    timeFile = fopen("micromagnetics_timing.txt", "a")
+    timeFile = fopen("micromagnetics_timing.txt", "a");
     time_t timeNtv;  /* "Native" */
     time(&timeNtv);
     char timeBuf[sizeof "YYYY-MM-DDTHH:MM:SS"];
     strftime(timeBuf, sizeof timeBuf, "%FT%T", localtime(&timeNtv));
-    fprintf("startTime: %s\n", timeBuf);
+    fprintf(timeFile, "startTime: %s\n", timeBuf);
     sEdgeState->hasTimerStarted = 1;
+    fclose(timeFile);
 }
 
 /* Write exfiltrated data to file. */
@@ -205,12 +206,13 @@ if (message->iteration == sEdgeProperties->finishLine)
 if (sEdgeState->nodesFinished >= sEdgeProperties->nodeCount)
 {
     FILE* timeFile;
-    timeFile = fopen("micromagnetics_timing.txt", "a")
+    timeFile = fopen("micromagnetics_timing.txt", "a");
     time_t timeNtv;  /* "Native" */
     time(&timeNtv);
     char timeBuf[sizeof "YYYY-MM-DDTHH:MM:SS"];
     strftime(timeBuf, sizeof timeBuf, "%FT%T", localtime(&timeNtv));
-    fprintf("endTime: %s\n", timeBuf);
+    fprintf(timeFile, "endTime: %s\n", timeBuf);
+    fclose(timeFile);
 }
           ]]></OnReceive>
         </InputPin>

@@ -14,5 +14,5 @@ if (deviceState->did_we_just_update || deviceState->is_initialised == 0)
      *  - if (deviceState->iteration >= deviceProperties->finishLine) */
 
     if (deviceState->iteration >= deviceProperties->finishLine)
-        *readyToSend |= RTS_FLAG_exfiltrate
+        *readyToSend |= RTS_FLAG_exfiltrate;
 }
