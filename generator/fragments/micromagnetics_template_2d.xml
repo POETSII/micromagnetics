@@ -68,6 +68,7 @@ which may have been populated.
                   default="{{parameters/final_iteration.txt}}"/>
         </Properties>
         <State>
+          <Scalar type="uint8_t" name="done" default="0"/>
           <Scalar type="uint8_t" name="did_we_just_update" default="0"/>
 
           <!-- "Our" state. Note that "iteration" starts at one; this is to
@@ -236,9 +237,11 @@ fprintf(dataFile, "%u,%u,%u,%f,%f,%f\n",
 fclose(dataFile);
 
 /* Has this device just crossed the finish line? If so, count it. */
-if (message->iteration == sEdgeProperties->finishLine)
+if (message->iteration >= sEdgeProperties->finishLine)
 {
     sEdgeState->nodesFinished++;
+    printf("Finished: %u/%u\n", sEdgeState->nodesFinished,
+           sEdgeProperties->nodeCount);
 }
 
 /* Stop timer, if this is the last device to cross the finish line. */
