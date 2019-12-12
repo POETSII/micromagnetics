@@ -27,24 +27,27 @@ def generate(x0Max, x1Max):
 # Deploy to a POETS box.
 def deploy(xmlPath="micromagnetics.xml", boxName="ayres"):
     print("Deploying to POETS engine \"{}\"...".format(boxName))
-    os.system("scp \"{}\" {}:~/repos/orchestrator/application_staging/xml/"
+    os.system("scp \"{}\" "
+              "{}:~/repos/orchestrator-demo/application_staging/xml/"
               .format(xmlPath, boxName))
     print("Application deployed.")
 
 # Run on POETS.
 def run(boxName="ayres"):
-    os.system("ssh {}-script -- \"bash run_demo.sh\"")
+    print("Starting POETS simulation via the Orchestrator...")
+    os.system("ssh {}-script -- \"bash run_demo.sh\"".format(boxName))
+    print("Simulation complete.")
 
 # Extract results.
 def exfiltrate(boxName="ayres"):
     print("Exfiltrating simulation results from POETS engine \"{}\"..."
           .format(boxName))
-    os.system("scp {}:~/repos/orchestrator/bin/micromagnetics* ./"
+    os.system("scp {}:~/repos/orchestrator-demo/bin/micromagnetics* ./"
               .format(boxName))
     print("Results exfiltrated.")
 
 # Visualise
-def run_my_shit():
+def visualise_results_3d():
     postprocess.doit()
 
 if __name__ == "__main__":
