@@ -357,7 +357,7 @@ int parse_args(int argc, char** argv,
 int do_it(unsigned x0Max, unsigned x1Max, char* outputPath)
 {
     /* Make stuff. */
-    write_parameters(x0Max * x1Max, FINAL_ITERATION);
+    write_parameters((x0Max + 1) * (x1Max + 1), FINAL_ITERATION);
     if (x1Max == 0)  /* 1D */
     {
         if (write_instances_1d(x0Max, DEVICE_INSTANCE_FRAGMENT,

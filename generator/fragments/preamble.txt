@@ -17,5 +17,3 @@ the 0 direction from this node". The step length is represented by `h` in the
 mathematics (same for each direction), and is not explictly stated as a
 property or state in this XML, but is incorporated into the interaction
 coefficients.
-
-While there isn't any available yet, documentation is coming shortly :).

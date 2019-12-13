@@ -240,12 +240,16 @@ fclose(dataFile);
 if (message->iteration >= sEdgeProperties->finishLine)
 {
     sEdgeState->nodesFinished++;
-    printf("Finished: %u/%u\n", sEdgeState->nodesFinished,
-           sEdgeProperties->nodeCount);
+    /* Print that some of the devices have completed, the first time. */
+    if (sEdgeState->nodesFinished == sEdgeProperties->nodeCount - 1)
+    {
+        printf("Micromagnetic simulation with %u devices complete.\n",
+               sEdgeProperties->nodeCount);
+    }
 }
 
 /* Stop timer, if this is the last device to cross the finish line. */
-if (sEdgeState->nodesFinished >= sEdgeProperties->nodeCount)
+if (sEdgeState->nodesFinished >= sEdgeProperties->nodeCount - 1)
 {
     FILE* timeFile;
     timeFile = fopen("micromagnetics_timing.txt", "a");

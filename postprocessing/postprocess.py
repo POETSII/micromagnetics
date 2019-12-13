@@ -47,6 +47,8 @@ def get_maximum_iteration_from_data(df):
         numberOfPoints = (df["x0"].max() + 1) *\
           (df["x1"].max() + 1) * (df["x2"].max() + 1)
 
+    return 1250
+
     # Find the last iteration with all records in it - this is the final
     # complete iteration.
     iterationEnd = df["iteration"].max()
@@ -108,30 +110,29 @@ def doit(show=True):
     vectors.glyph.glyph_source.glyph_source.center = np.array([0., 0., 0.])
     vectors.glyph.glyph_source.glyph_source.radius = 0.4
 
-    print("Rendering major iterations {}-{}...".format(1, 9))
+    #print("Rendering major iterations {}-{}...".format(1, 9))
     # for iteration in range(1, iterationEnd):
     for iteration in [iterationEnd]:
         thisIteration = df.query("iteration == {}".format(iteration))
-        if (iteration % 10 == 0):
-            print("Rendering major iterations {}-{}..."
-                  .format(iteration, iteration + 9))
-
+        #if (iteration % 10 == 0):
+            #print("Rendering major iterations {}-{}..."
+            #      .format(iteration, iteration + 9))
         # Cone values
         m0 = thisIteration['m0'].values
         m1 = thisIteration['m1'].values
         m2 = thisIteration['m2'].values
 
         # Cone positions
-        x0 = thisIteration['x0'].values
+        x0 = (thisIteration['x0'].values - thisIteration["x0"].max() / 2) * 2
         if (dimensionality < 3):
             x2 = np.zeros_like(x0)
         else:
-            x2 = thisIteration['x2'].values
+            x2 = (thisIteration['x2'].values - thisIteration["x2"].max() / 2) * 2
 
         if (dimensionality < 2):
             x1 = np.zeros_like(x0)
         else:
-            x1 = thisIteration['x1'].values
+            x1 = (thisIteration['x1'].values - thisIteration["x1"].max() / 2) * 2
 
         # Update data structures.
         vectors.mlab_source.reset(x=x0, y=x1, z=x2,
