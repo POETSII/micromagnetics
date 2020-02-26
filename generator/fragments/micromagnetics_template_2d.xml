@@ -213,7 +213,7 @@ which may have been populated.
             <Scalar type="uint8_t" name="hasTimerStarted" default="0"/>
           </State>
           <OnReceive><![CDATA[
-{{super_recv_exfiltration.c}}
+{{super_recv_exfiltration_2d.c}}
           ]]></OnReceive>
         </InputPin>
       </SupervisorDeviceType>

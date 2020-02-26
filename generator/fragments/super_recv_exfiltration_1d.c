@@ -15,17 +15,18 @@ if (sEdgeState->hasTimerStarted == 0)
 /* Write exfiltrated data to file. */
 FILE* dataFile;
 dataFile = fopen("micromagnetics.csv", "a");
-fprintf(dataFile, "%u,%u,%u,%f,%f,%f\n",
-        message->x0, message->x1, message->iteration,
+fprintf(dataFile, "%u,%u,%f,%f,%f\n",
+        message->x0, message->iteration,
         message->m_x0, message->m_x1, message->m_x2);
 fclose(dataFile);
 
 /* Has this device just crossed the finish line? If so, count it. */
-if (message->iteration >= sEdgeProperties->finishLine)
+if (message->iteration == sEdgeProperties->finishLine)
 {
     sEdgeState->nodesFinished++;
-    /* Print that some of the devices have completed, the first time. */
-    if (sEdgeState->nodesFinished == sEdgeProperties->nodeCount - 1)
+
+    /* Print when we're done. */
+    if (sEdgeState->nodesFinished == sEdgeProperties->nodeCount)
     {
         printf("Micromagnetic simulation with %u devices complete.\n",
                sEdgeProperties->nodeCount);
@@ -33,7 +34,7 @@ if (message->iteration >= sEdgeProperties->finishLine)
 }
 
 /* Stop timer, if this is the last device to cross the finish line. */
-if (sEdgeState->nodesFinished >= sEdgeProperties->nodeCount - 1)
+if (sEdgeState->nodesFinished >= sEdgeProperties->nodeCount)
 {
     FILE* timeFile;
     timeFile = fopen("micromagnetics_timing.txt", "a");
