@@ -129,6 +129,9 @@ int write_instances_1d(unsigned x0Max, char* deviceInstancePath,
                 "<EdgeI path=\":exfiltrate-%u:exfiltrate\"/>\n", x0);
     }
 
+    /* Special case - device zero starts the timer. */
+    fprintf(edgeInstanceFile, "<EdgeI path=\":starttimer-0:starttimer\"/>\n");
+
     fclose(deviceInstanceFile);
     fclose(edgeInstanceFile);
     return 0;
@@ -249,6 +252,10 @@ int write_instances_2d(unsigned x0Max, unsigned x1Max,
         fprintf(edgeInstanceFile,
                 "<EdgeI path=\":exfiltrate-%u_%u:exfiltrate\"/>\n", x0, x1);
     }
+
+    /* Special case - device zero starts the timer. */
+    fprintf(edgeInstanceFile,
+            "<EdgeI path=\":starttimer-0_0:starttimer\"/>\n");
 
     fclose(deviceInstanceFile);
     fclose(edgeInstanceFile);

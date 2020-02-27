@@ -26,6 +26,11 @@ which may have been populated.
           <Scalar type="uint32_t" name="iteration"/>
         </Message>
       </MessageType>
+      <MessageType id="timer">
+        <Message>
+          <Scalar type="uint8_t" name="payload"/>  <!-- Not used yet. -->
+        </Message>
+      </MessageType>
     </MessageTypes>
     <DeviceTypes>
       <DeviceType id="fd_point">
@@ -59,6 +64,11 @@ which may have been populated.
           <Scalar type="float" name="exchange_coeff_dt" default="7.409e-11"/>
           <Scalar type="float" name="dmi_coeff_dt" default="1.250e-2"/>
           <Scalar type="float" name="zeeman_coeff_dt" default="-6.301e-3"/>
+
+          <!-- When are we done? (does not stop the simulation, only governs
+               exfiltration logic for the final interation -->
+          <Scalar type="uint32_t" name="finishLine"
+                  default="{{parameters/final_iteration.txt}}"/>
         </Properties>
         <State>
           <Scalar type="uint8_t" name="did_we_just_update" default="0"/>
@@ -128,6 +138,13 @@ which may have been populated.
           ]]></OnSend>
         </OutputPin>
 
+        <!-- Supervisor timing (only device zero for now). -->
+        <OutputPin name="starttimer" messageTypeId="timer">
+          <OnSend><![CDATA[
+{{populate_timer_message.c}}
+          ]]></OnSend>
+        </OutputPin>
+
         <!-- Receiving the word from our neighbours. -->
         <InputPin name="state_recv_x0plus" messageTypeId="state">
           <OnReceive><![CDATA[
@@ -148,6 +165,17 @@ which may have been populated.
         <Code><![CDATA[
 {{super_code.c}}
         ]]></Code>
+        <InputPin name="starttimer" messageTypeId="timer">
+          <State>
+            <!-- We start timing when the first message is received from a
+                 compute device.
+            -->
+            <Scalar type="uint8_t" name="hasTimerStarted" default="0"/>
+          </State>
+          <OnReceive><![CDATA[
+{{super_recv_starttimer.c}}
+          ]]></OnReceive>
+        </InputPin>
         <InputPin name="exfiltrate" messageTypeId="exfiltration">
           <Properties>
             <!-- Devices will continue to compute until forcefully stopped.
@@ -165,12 +193,9 @@ which may have been populated.
                     default="{{parameters/final_iteration.txt}}"/>
           </Properties>
           <State>
-            <!-- We start timing when the first message is received from a
-                 compute device. We stop timing when the last device crosses
-                 the finish line.
+            <!-- We stop timing when the last device crosses the finish line.
             -->
             <Scalar type="uint32_t" name="nodesFinished" default="0"/>
-            <Scalar type="uint8_t" name="hasTimerStarted" default="0"/>
           </State>
           <OnReceive><![CDATA[
 {{super_recv_exfiltration_1d.c}}

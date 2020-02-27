@@ -1,17 +1,3 @@
-/* Start timer, if this is the first exfiltration message we have received. */
-if (sEdgeState->hasTimerStarted == 0)
-{
-    FILE* timeFile;
-    timeFile = fopen("micromagnetics_timing.txt", "a");
-    time_t timeNtv;  /* "Native" */
-    time(&timeNtv);
-    char timeBuf[sizeof "YYYY-MM-DDTHH:MM:SS"];
-    strftime(timeBuf, sizeof timeBuf, "%FT%T", localtime(&timeNtv));
-    fprintf(timeFile, "startTime: %s\n", timeBuf);
-    sEdgeState->hasTimerStarted = 1;
-    fclose(timeFile);
-}
-
 /* Write exfiltrated data to file. */
 FILE* dataFile;
 dataFile = fopen("micromagnetics.csv", "a");
