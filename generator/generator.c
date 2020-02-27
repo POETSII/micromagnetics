@@ -1,5 +1,6 @@
 /* Generates micromagnetic XML. */
 
+#include "initial_conditions.h"
 #include "template.h"
 
 #define DEVICE_INSTANCE_FRAGMENT "fragments/instances/device_instances.xml"
@@ -151,6 +152,11 @@ int write_instances_2d(unsigned x0Max, unsigned x1Max,
     unsigned x0;
     unsigned x1;
 
+    /* Initial conditions (per co-ordinate). */
+    float mx0;
+    float mx1;
+    float mx2;
+
     /* Open the fragments to write to, clobbering any existing content. */
     FILE* deviceInstanceFile;
     FILE* edgeInstanceFile;
@@ -186,11 +192,12 @@ int write_instances_2d(unsigned x0Max, unsigned x1Max,
         /* Default properties */
         sprintf(props, "\"x0\": %u, \"x1\": %u", x0, x1);
 
-        /* Initial conditions at the middle. */
-        if (x0 == x0Max/2 && x1 == x1Max/2)
-        {
-            strcpy(state, "\"m_x0\": 0.0, \"m_x1\": 0.0, \"m_x2\": -1.0");
-        }
+        /* Plop a skyrmion in there, normalising the co-ordinates first. */
+        skyrmion_profile(&mx0, &mx1, &mx2,
+                         x0 - x0Max / 2, x1 - x1Max / 2, 0,
+                         x0Max / 3);
+        sprintf(state, "\"m_x0\": %f, \"m_x1\": %f, \"m_x2\": %f",
+                mx0, mx1, mx2);
 
         /* Write the device entry. */
         fprintf(deviceInstanceFile,
