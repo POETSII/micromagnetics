@@ -194,7 +194,7 @@ int write_instances_2d(unsigned x0Max, unsigned x1Max,
 
         /* Plop a skyrmion in there, normalising the co-ordinates first. */
         skyrmion_profile(&mx0, &mx1, &mx2,
-                         x0 - x0Max / 2, x1 - x1Max / 2, 0,
+                         x0 - (float)(x0Max / 2), x1 - (float)(x1Max / 2), 0,
                          x0Max / 3);
         sprintf(state, "\"m_x0\": %f, \"m_x1\": %f, \"m_x2\": %f",
                 mx0, mx1, mx2);
