@@ -20,8 +20,10 @@ if (deviceState->did_we_just_update || deviceState->is_initialised == 0)
      *  - if (deviceProperties->x0 == 0 && deviceProperties->x1 == 0)
      *  - if (deviceState->iteration >= deviceProperties->finishLine) */
 
-    /* Exfiltrates (iteration == some value) */
-    if (deviceState->iteration == deviceProperties->finishLine)
+    /* Exfiltrates (iteration >= some value, and we've not exfiltrated
+     * before) */
+    if (deviceState->iteration >= deviceProperties->finishLine &&
+        deviceState->done == 0)
     {
         *readyToSend |= RTS_FLAG_exfiltrate;
     }
