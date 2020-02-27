@@ -5,7 +5,7 @@ import pandas as pd
 
 
 def load_data(dataPath):
-    df = pd.read_csv(dataPath)
+    df = pd.read_csv(dataPath, header=None)
 
     # Figure out if this is a 1d, 2d, or 3d(!) plot. Pandas will shout if it
     # doesn't fit. Also precompute the size of the domain.
@@ -46,8 +46,6 @@ def get_maximum_iteration_from_data(df):
     else:
         numberOfPoints = (df["x0"].max() + 1) *\
           (df["x1"].max() + 1) * (df["x2"].max() + 1)
-
-    return 1250
 
     # Find the last iteration with all records in it - this is the final
     # complete iteration.
@@ -110,13 +108,19 @@ def doit(show=True):
     vectors.glyph.glyph_source.glyph_source.center = np.array([0., 0., 0.])
     vectors.glyph.glyph_source.glyph_source.radius = 0.4
 
-    #print("Rendering major iterations {}-{}...".format(1, 9))
-    # for iteration in range(1, iterationEnd):
-    for iteration in [iterationEnd]:
+    if show is False and iterationEnd > 0:
+        print("Rendering major iterations {}-{}...".format(1, 9))
+        iterationSpace = range(1, iterationEnd)
+    else:
+        iterationSpace = [iterationEnd]
+
+    for iteration in iterationSpace:
         thisIteration = df.query("iteration == {}".format(iteration))
-        #if (iteration % 10 == 0):
-            #print("Rendering major iterations {}-{}..."
-            #      .format(iteration, iteration + 9))
+        if show is False:
+            if (iteration % 10 == 0):
+                print("Rendering major iterations {}-{}..."
+                    .format(iteration, iteration + 9))
+
         # Cone values
         m0 = thisIteration['m0'].values
         m1 = thisIteration['m1'].values
