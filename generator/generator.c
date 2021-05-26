@@ -270,7 +270,7 @@ int write_instances_2d(unsigned x0Max, unsigned x1Max,
 
 /* Populates x0Max, x1Max, and outputPath based of argc and argv.  */
 int parse_args(int argc, char** argv,
-                unsigned* x0Max, unsigned* x1Max, char* outputPath)
+               unsigned* x0Max, unsigned* x1Max, char* outputPath)
 {
     char* unused;
     const char* help = \
