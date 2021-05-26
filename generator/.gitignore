@@ -1,5 +1,4 @@
 generator
-templater
 *.so
 micromagnetic_simulation.xml
 fragments/instances/*.xml
