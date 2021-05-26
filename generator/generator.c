@@ -35,10 +35,10 @@ int write_graph_instance(char* graphInstanceName,
 "  <GraphInstance id=\"%s\"\n"
 "                 graphTypeId=\"%s\">\n"
 "    <DeviceInstances>\n"
-"{{device_instances.xml}}"
+"{{f:device_instances.xml}}"
 "    </DeviceInstances>\n"
 "    <EdgeInstances>\n"
-"{{edge_instances.xml}}"
+"{{f:edge_instances.xml}}"
 "    </EdgeInstances>\n"
             "  </GraphInstance>", graphInstanceName, graphType);
 

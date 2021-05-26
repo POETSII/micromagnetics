@@ -3,7 +3,7 @@
 This XML is a template that describes two-dimensional micromagnetic simulation,
 which may have been populated.
 
-{{preamble.txt}}-->
+{{f:preamble.txt}}-->
 
 <Graphs xmlns="https://poets-project.org/schemas/virtual-graph-schema-v2">
   <GraphType id="micromagnetic_simulation_2d">
@@ -70,7 +70,7 @@ which may have been populated.
           <!-- When are we done? (does not stop the simulation, only governs
                exfiltration logic for the final interation -->
           <Scalar type="uint32_t" name="finishLine"
-                  default="{{parameters/final_iteration.txt}}"/>
+                  default="{{f:parameters/final_iteration.txt}}"/>
         </Properties>
         <State>
           <Scalar type="uint8_t" name="did_we_just_update" default="0"/>
@@ -126,11 +126,11 @@ which may have been populated.
 
         </State>
         <ReadyToSend><![CDATA[
-{{fd_point_rts.c}}
+{{f:fd_point_rts.c}}
         ]]></ReadyToSend>
 
         <OnCompute><![CDATA[
-{{fd_point_on_compute.c}}
+{{f:fd_point_on_compute.c}}
         ]]></OnCompute>
 
         <!-- Here is a dummy input pin because people can't talk to each other,
@@ -148,57 +148,57 @@ which may have been populated.
         <!-- Getting the word out to our neighbours. -->
         <OutputPin name="state_push" messageTypeId="state">
           <OnSend><![CDATA[
-{{populate_state_message.c}}
+{{f:populate_state_message.c}}
           ]]></OnSend>
         </OutputPin>
 
         <!-- Getting the word out to the supervisor. -->
         <OutputPin name="exfiltrate" messageTypeId="exfiltration">
           <OnSend><![CDATA[
-{{populate_exfiltration_message_2d.c}}
+{{f:populate_exfiltration_message_2d.c}}
           ]]></OnSend>
         </OutputPin>
 
         <!-- Supervisor timing (only device zero for now). -->
         <OutputPin name="starttimer" messageTypeId="timer">
           <OnSend><![CDATA[
-{{populate_timer_message.c}}
+{{f:populate_timer_message.c}}
           ]]></OnSend>
         </OutputPin>
 
         <!-- Receiving the word from our neighbours. -->
         <InputPin name="state_recv_x0plus" messageTypeId="state">
           <OnReceive><![CDATA[
-{{fd_point_recv_x0plus.c}}
-{{check_increment_state_2d.c}}
+{{f:fd_point_recv_x0plus.c}}
+{{f:check_increment_state_2d.c}}
           ]]></OnReceive>
         </InputPin>
 
         <InputPin name="state_recv_x0minus" messageTypeId="state">
           <OnReceive><![CDATA[
-{{fd_point_recv_x0minus.c}}
-{{check_increment_state_2d.c}}
+{{f:fd_point_recv_x0minus.c}}
+{{f:check_increment_state_2d.c}}
           ]]></OnReceive>
         </InputPin>
 
         <InputPin name="state_recv_x1plus" messageTypeId="state">
           <OnReceive><![CDATA[
-{{fd_point_recv_x1plus.c}}
-{{check_increment_state_2d.c}}
+{{f:fd_point_recv_x1plus.c}}
+{{f:check_increment_state_2d.c}}
           ]]></OnReceive>
         </InputPin>
 
         <InputPin name="state_recv_x1minus" messageTypeId="state">
           <OnReceive><![CDATA[
-{{fd_point_recv_x1minus.c}}
-{{check_increment_state_2d.c}}
+{{f:fd_point_recv_x1minus.c}}
+{{f:check_increment_state_2d.c}}
           ]]></OnReceive>
         </InputPin>
       </DeviceType>
 
       <SupervisorDeviceType id="supervisor">
         <Code><![CDATA[
-{{super_code.c}}
+{{f:super_code.c}}
         ]]></Code>
         <InputPin name="starttimer" messageTypeId="timer">
           <State>
@@ -208,7 +208,7 @@ which may have been populated.
             <Scalar type="uint8_t" name="hasTimerStarted" default="0"/>
           </State>
           <OnReceive><![CDATA[
-{{super_recv_starttimer.c}}
+{{f:super_recv_starttimer.c}}
           ]]></OnReceive>
         </InputPin>
         <InputPin name="exfiltrate" messageTypeId="exfiltration">
@@ -223,9 +223,9 @@ which may have been populated.
                   - finishLine: Where the finish line is (how many iterations)
             -->
             <Scalar type="uint32_t" name="nodeCount"
-                    default="{{parameters/node_count.txt}}"/>
+                    default="{{f:parameters/node_count.txt}}"/>
             <Scalar type="uint32_t" name="finishLine"
-                    default="{{parameters/final_iteration.txt}}"/>
+                    default="{{f:parameters/final_iteration.txt}}"/>
           </Properties>
           <State>
             <!-- We stop timing when the last device crosses the finish line.
@@ -233,11 +233,11 @@ which may have been populated.
             <Scalar type="uint32_t" name="nodesFinished" default="0"/>
           </State>
           <OnReceive><![CDATA[
-{{super_recv_exfiltration_2d.c}}
+{{f:super_recv_exfiltration_2d.c}}
           ]]></OnReceive>
         </InputPin>
       </SupervisorDeviceType>
     </DeviceTypes>
   </GraphType>
-{{instances/graph_instance.xml}}
+{{f:instances/graph_instance.xml}}
 </Graphs>

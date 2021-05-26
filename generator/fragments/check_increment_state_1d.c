@@ -1,7 +1,7 @@
 /* Now we need to check if our neighbours satisfy the update condition. If they
  * do, we update our state. */
 
-{{check_increment_vars_1d.c}}
+{{f:check_increment_vars_1d.c}}
 
 goingToUpdate = 1;  /* Innocent until proven guilty. */
 if (deviceState->iteration_x0plus < deviceState->iteration) goingToUpdate = 0;
@@ -75,7 +75,7 @@ if (goingToUpdate == 1)
     deviceState->m_x1 = deviceState->m_x1 + dm_x1;
     deviceState->m_x2 = deviceState->m_x2 + dm_x2;
 
-{{normalise_fisr.c}}
+{{f:normalise_fisr.c}}
 
     /* We did it! This variable notifies the ReadyToSend (RTS) handler that
      * we've just updated. Once read, the output pin handler will set this to
