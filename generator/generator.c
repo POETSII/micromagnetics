@@ -352,8 +352,8 @@ int do_it(unsigned x0Max, unsigned x1Max, char* outputPath)
     for (valIndex = 0; valIndex < numVals; valIndex++)
         valValues[valIndex] = (char*) \
             malloc(VALUE_BUFFER_SIZE * sizeof(char*));  /* Yikes */
-    sprintf(valValues[0], "%u", (x0Max + 1) * (x1Max + 1));
-    sprintf(valValues[1], "%u", FINAL_ITERATION);
+    sprintf(valValues[0], "%u", FINAL_ITERATION);
+    sprintf(valValues[1], "%u", (x0Max + 1) * (x1Max + 1));
 
     /* Make stuff. */
     if (x1Max == 0)  /* 1D */
