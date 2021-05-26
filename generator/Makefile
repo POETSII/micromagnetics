@@ -5,7 +5,7 @@ LFLAGS = -lm -lbsd
 all: libgenerator.so generator
 
 clean:
-	rm --force templater generator libgenerator.so
+	rm --force generator libgenerator.so
 
 generator: generator.c initial_conditions.c \
 $(TEMPLATE_DIR)/template.c $(TEMPLATE_DIR)/template.h
