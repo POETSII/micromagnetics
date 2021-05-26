@@ -1,4 +1,4 @@
 [submodule "generator/templater"]
 	path = generator/templater
 	url = https://github.com/mvousden/templater/
-    branch = main
+	branch = main
