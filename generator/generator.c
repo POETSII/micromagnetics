@@ -379,7 +379,8 @@ int do_it(unsigned x0Max, unsigned x1Max, char* outputPath)
         if (write_graph_instance("micromagnetics",
                                  GRAPH_INSTANCE_FRAGMENT,
                                  "micromagnetic_simulation_1d")) return 1;
-        return template_files(MICROMAGNETICS_TEMPLATE_1D, outputPath);
+        return template_files(MICROMAGNETICS_TEMPLATE_1D, outputPath,
+                              NULL, NULL, 0);
     }
 
     else  /* 2D */
@@ -389,7 +390,8 @@ int do_it(unsigned x0Max, unsigned x1Max, char* outputPath)
         if (write_graph_instance("micromagnetics",
                                  GRAPH_INSTANCE_FRAGMENT,
                                  "micromagnetic_simulation_2d")) return 1;
-        return template_files(MICROMAGNETICS_TEMPLATE_2D, outputPath);
+        return template_files(MICROMAGNETICS_TEMPLATE_2D, outputPath,
+                              NULL, NULL, 0);
     }
 }
 
