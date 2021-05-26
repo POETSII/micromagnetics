@@ -1,4 +1,9 @@
+#include "math.h"
+
 #include "initial_conditions.h"
+
+#define TOLERANCE 1e-6
+#define PI (float) 3.14159265
 
 /* Skyrmion profile generator. For a given co-ordinate in the space, returns
  * the magnetisation at that co-ordinate given that a skyrmion exists centred
@@ -19,8 +24,8 @@
  * Returns 1 if the co-ordinate is within the skyrmion, and 0 otherwise (this
  * can be exploited to produce skyrmion lattices more easily). */
 unsigned skyrmion_profile(float* mx0, float* mx1, float* mx2,
-                          float x0, float x1, float x2,
-                          float radius)
+                          const float x0, const float x1, const float x2,
+                          const float radius)
 {
     float radialCoordinate;
     float argumentCoordinate;
@@ -28,8 +33,9 @@ unsigned skyrmion_profile(float* mx0, float* mx1, float* mx2,
     float norm;
 
     /* Compute the radial co-ordinate (to go with the argument co-ordinate
-     * later). */
-    radialCoordinate = sqrt(pow(x0, 2) + pow(x1, 2));
+     * later). Note that x2 is not used, as the skyrmion is invariant in that
+     * direction. */
+    radialCoordinate = sqrt(pow(x0, 2) + pow(x1, 2)) + x2 * 0;
 
     /* Determine if the input co-ordinate is within the skyrmion. If not, exit
      * quickly. */
@@ -42,14 +48,14 @@ unsigned skyrmion_profile(float* mx0, float* mx1, float* mx2,
     }
 
     /* Compute the argument co-ordinate. */
-    if (fabs(x0) < 1e-6)
+    if (fabs(x0) < TOLERANCE)
     {
-        if (fabs(x1) < 1e-6)
+        if (fabs(x1) < TOLERANCE)
             argumentCoordinate = 0;
         else if (x1 > 0)
-            argumentCoordinate = PI / 2;
+            argumentCoordinate = (float) PI / 2;
         else
-            argumentCoordinate = -PI / 2;
+            argumentCoordinate = (float) -PI / 2;
     }
     else
         argumentCoordinate = atan2(x1, x0);
@@ -69,3 +75,6 @@ unsigned skyrmion_profile(float* mx0, float* mx1, float* mx2,
     *mx2 /= norm;
     return 1;
 }
+
+#undef TOLERANCE
+#undef PI

@@ -14,9 +14,9 @@
 #define FINAL_ITERATION 10000  /* Given dt=1e-13, this represents t=1e-9 */
 
 /* Writes a graph instance to file. */
-int write_graph_instance(char* graphInstanceName,
-                         char* graphInstancePath,
-                         char* graphType)
+int write_graph_instance(const char* graphInstanceName,
+                         const char* graphInstancePath,
+                         const char* graphType)
 {
     /* Open the fragment to write to, clobbering any existing content. */
     FILE* graphInstanceFile;
@@ -46,8 +46,8 @@ int write_graph_instance(char* graphInstanceName,
 }
 
 /* Writes device and edge instances to a file. */
-int write_instances_1d(unsigned x0Max, char* deviceInstancePath,
-                       char* edgeInstancePath)
+int write_instances_1d(const unsigned x0Max, const char* deviceInstancePath,
+                       const char* edgeInstancePath)
 {
     /* Create a properties staging area and a state staging area, used for each
      * iteration. */
@@ -138,8 +138,9 @@ int write_instances_1d(unsigned x0Max, char* deviceInstancePath,
 }
 
 /* Writes device and edge instances to a file. */
-int write_instances_2d(unsigned x0Max, unsigned x1Max,
-                       char* deviceInstancePath, char* edgeInstancePath)
+int write_instances_2d(const unsigned x0Max, const unsigned x1Max,
+                       const char* deviceInstancePath,
+                       const char* edgeInstancePath)
 {
     /* Create a properties staging area and a state staging area, used for each
      * iteration. */
@@ -269,7 +270,7 @@ int write_instances_2d(unsigned x0Max, unsigned x1Max,
 }
 
 /* Populates x0Max, x1Max, and outputPath based of argc and argv.  */
-int parse_args(int argc, char** argv,
+int parse_args(const int argc, const char** argv,
                unsigned* x0Max, unsigned* x1Max, char* outputPath)
 {
     char* unused;
@@ -332,7 +333,7 @@ int parse_args(int argc, char** argv,
 }
 
 /* The meat and potatoes - made externally available in shared-object land. */
-int do_it(unsigned x0Max, unsigned x1Max, char* outputPath)
+int do_it(const unsigned x0Max, const unsigned x1Max, const char* outputPath)
 {
     unsigned numVals;
     char** valHandles;
@@ -384,7 +385,7 @@ int do_it(unsigned x0Max, unsigned x1Max, char* outputPath)
     return rc;
 }
 
-int main(int argc, char** argv)
+int main(const int argc, const char** argv)
 {
     unsigned x0Max;
     unsigned x1Max;
