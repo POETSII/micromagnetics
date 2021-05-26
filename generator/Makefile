@@ -9,10 +9,10 @@ clean:
 
 generator: generator.c initial_conditions.c \
 $(TEMPLATE_DIR)/template.c $(TEMPLATE_DIR)/template.h
-	${CC} ${CFLAGS} $^ -o $@ ${LFLAGS}
+	${CC} ${CFLAGS} $(filter %.c, $^) -o $@ ${LFLAGS}
 
 libgenerator.so: generator.c initial_conditions.c \
 $(TEMPLATE_DIR)/template.c $(TEMPLATE_DIR)/template.h
-	${CC} ${CFLAGS} -shared -fPIC -o $@ $^ ${LFLAGS}
+	${CC} ${CFLAGS} -shared -fPIC $(filter %.c, $^) -o $@ ${LFLAGS}
 
 .PHONY: all clean
