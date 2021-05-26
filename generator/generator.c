@@ -8,10 +8,9 @@
 #define GRAPH_INSTANCE_FRAGMENT "fragments/instances/graph_instance.xml"
 #define MICROMAGNETICS_TEMPLATE_1D "fragments/micromagnetics_template_1d.xml"
 #define MICROMAGNETICS_TEMPLATE_2D "fragments/micromagnetics_template_2d.xml"
-#define DEVICE_COUNT_PARAMETER_FRAGMENT "fragments/parameters/node_count.txt"
-#define FINAL_ITERATION_PARAMETER_FRAGMENT "fragments/parameters/final_iteration.txt"
 #define JSON_BUFFER_SIZE 1000
 #define OUTPATH_BUFFER_SIZE 1000
+#define VALUE_BUFFER_SIZE 64
 #define FINAL_ITERATION 10000  /* Given dt=1e-13, this represents t=1e-9 */
 
 /* Writes a graph instance to file. */
@@ -269,41 +268,6 @@ int write_instances_2d(unsigned x0Max, unsigned x1Max,
     return 0;
 }
 
-/* Defines parameters for the templating engine. */
-int write_parameters(unsigned numberOfDevices, unsigned stoppingIteration)
-{
-    /* Open the fragments to write to, clobbering any existing content. */
-    FILE* deviceCountFile;
-    FILE* finalIterationFile;
-    deviceCountFile = fopen(DEVICE_COUNT_PARAMETER_FRAGMENT, "wb");
-    if (deviceCountFile == NULL)
-    {
-        fprintf(stderr,
-                "Error opening output file '%s': %s.\n",
-                DEVICE_COUNT_PARAMETER_FRAGMENT, strerror(errno));
-        return 1;
-    }
-
-    finalIterationFile = fopen(FINAL_ITERATION_PARAMETER_FRAGMENT, "wb");
-    if (finalIterationFile == NULL)
-    {
-        fprintf(stderr,
-                "Error opening output file '%s': %s.\n",
-                FINAL_ITERATION_PARAMETER_FRAGMENT, strerror(errno));
-        fclose(deviceCountFile);
-        return 1;
-    }
-
-    /* Do it. */
-    fprintf(deviceCountFile, "%u", numberOfDevices);
-    fprintf(finalIterationFile, "%u", stoppingIteration);
-
-    /* Good bye! */
-    fclose(deviceCountFile);
-    fclose(finalIterationFile);
-    return 0;
-}
-
 /* Populates x0Max, x1Max, and outputPath based of argc and argv.  */
 int parse_args(int argc, char** argv,
                 unsigned* x0Max, unsigned* x1Max, char* outputPath)
@@ -370,8 +334,28 @@ int parse_args(int argc, char** argv,
 /* The meat and potatoes - made externally available in shared-object land. */
 int do_it(unsigned x0Max, unsigned x1Max, char* outputPath)
 {
+    unsigned numVals;
+    char** valHandles;
+    char** valValues;
+    int rc;
+    int valIndex;
+
+    /* Setting values for the templater. We care about:
+     *  - final_iteration
+     *  - node_count */
+    numVals = 2;
+    valHandles = (char**) malloc(numVals * sizeof(char*));
+    valHandles[0] = "final_iteration";
+    valHandles[1] = "node_count";
+
+    valValues = (char**) malloc(numVals * sizeof(char*));
+    for (valIndex = 0; valIndex < numVals; valIndex++)
+        valValues[valIndex] = (char*) \
+            malloc(VALUE_BUFFER_SIZE * sizeof(char*));  /* Yikes */
+    sprintf(valValues[0], "%u", (x0Max + 1) * (x1Max + 1));
+    sprintf(valValues[1], "%u", FINAL_ITERATION);
+
     /* Make stuff. */
-    write_parameters((x0Max + 1) * (x1Max + 1), FINAL_ITERATION);
     if (x1Max == 0)  /* 1D */
     {
         if (write_instances_1d(x0Max, DEVICE_INSTANCE_FRAGMENT,
@@ -379,8 +363,8 @@ int do_it(unsigned x0Max, unsigned x1Max, char* outputPath)
         if (write_graph_instance("micromagnetics",
                                  GRAPH_INSTANCE_FRAGMENT,
                                  "micromagnetic_simulation_1d")) return 1;
-        return template_files(MICROMAGNETICS_TEMPLATE_1D, outputPath,
-                              NULL, NULL, 0);
+        rc = template_files(MICROMAGNETICS_TEMPLATE_1D, outputPath,
+                            valHandles, valValues, numVals);
     }
 
     else  /* 2D */
@@ -390,9 +374,14 @@ int do_it(unsigned x0Max, unsigned x1Max, char* outputPath)
         if (write_graph_instance("micromagnetics",
                                  GRAPH_INSTANCE_FRAGMENT,
                                  "micromagnetic_simulation_2d")) return 1;
-        return template_files(MICROMAGNETICS_TEMPLATE_2D, outputPath,
-                              NULL, NULL, 0);
+        rc = template_files(MICROMAGNETICS_TEMPLATE_2D, outputPath,
+                            valHandles, valValues, numVals);
     }
+
+    for (valIndex = 0; valIndex < numVals; free(valValues[valIndex++]));
+    free(valHandles);
+    free(valValues);
+    return rc;
 }
 
 int main(int argc, char** argv)

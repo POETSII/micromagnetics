@@ -70,7 +70,7 @@ which may have been populated.
           <!-- When are we done? (does not stop the simulation, only governs
                exfiltration logic for the final interation -->
           <Scalar type="uint32_t" name="finishLine"
-                  default="{{f:parameters/final_iteration.txt}}"/>
+                  default="{{v:final_iteration}}"/>
         </Properties>
         <State>
           <Scalar type="uint8_t" name="did_we_just_update" default="0"/>
@@ -223,9 +223,9 @@ which may have been populated.
                   - finishLine: Where the finish line is (how many iterations)
             -->
             <Scalar type="uint32_t" name="nodeCount"
-                    default="{{f:parameters/node_count.txt}}"/>
+                    default="{{v:node_count}}"/>
             <Scalar type="uint32_t" name="finishLine"
-                    default="{{f:parameters/final_iteration.txt}}"/>
+                    default="{{v:final_iteration}}"/>
           </Properties>
           <State>
             <!-- We stop timing when the last device crosses the finish line.
