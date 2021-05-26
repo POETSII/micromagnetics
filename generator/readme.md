@@ -1,10 +1,7 @@
 Combatibility and Language
 ===
 
-C89
-
-The templating mechanism uses POSIX' basename method, so if you're on Windows,
-you'll need to code this in yourself.
+C89, though also read the requirements of the templater.
 
 Notebook
 ===
