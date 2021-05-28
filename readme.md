@@ -1,3 +1,5 @@
+**This repository contains a submodule!** Consider cloning recursively.
+
 About
 ===
 
