@@ -41,8 +41,7 @@ which may have been populated.
           <Scalar type="uint16_t" name="x1"/>
 
           <!-- Effective field coefficients, including the time differential
-               and scalaing parameters to ease the burden on the
-               FPU. Currently:
+               and scaling parameters to ease the burden on the FPU. Currently:
 
                - exchange_coeff = 2*A*(dt)*gamma/h/mu_0/Ms*damping
                - dmi_coeff = D*(dt)*gamma/2/h/mu_0/Ms*damping
