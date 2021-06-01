@@ -8,29 +8,15 @@ which may have been populated.
 <Graphs xmlns="https://poets-project.org/schemas/virtual-graph-schema-v2">
   <GraphType id="micromagnetic_simulation_2d">
     <MessageTypes>
-      <MessageType id="state">
-        <Message>
-          <Scalar type="float" name="m_x0"/>
-          <Scalar type="float" name="m_x1"/>
-          <Scalar type="float" name="m_x2"/>
-          <Scalar type="uint32_t" name="iteration"/>
-        </Message>
-      </MessageType>
-      <MessageType id="exfiltration">
-        <Message>
-          <Scalar type="uint16_t" name="x0"/>
-          <Scalar type="uint16_t" name="x1"/>
-          <Scalar type="float" name="m_x0"/>
-          <Scalar type="float" name="m_x1"/>
-          <Scalar type="float" name="m_x2"/>
-          <Scalar type="uint32_t" name="iteration"/>
-        </Message>
-      </MessageType>
-      <MessageType id="timer">
-        <Message>
-          <Scalar type="uint8_t" name="payload"/>  <!-- Not used yet. -->
-        </Message>
-      </MessageType>
+      <MessageType id="state"><![CDATA[
+{{f:msg_state.c}}
+      ]]></MessageType>
+      <MessageType id="exfiltration"><![CDATA[
+{{f:msg_exfiltration_1d.c}}
+      ]]></MessageType>
+      <MessageType id="timer"><![CDATA[
+{{f:msg_timer.c}}
+      ]]></MessageType>
     </MessageTypes>
     <DeviceTypes>
       <DeviceType id="fd_point">
