@@ -12,7 +12,7 @@ which may have been populated.
 {{f:msg_state.c}}
       ]]></MessageType>
       <MessageType id="exfiltration"><![CDATA[
-{{f:msg_exfiltration_1d.c}}
+{{f:msg_exfiltration_2d.c}}
       ]]></MessageType>
       <MessageType id="timer"><![CDATA[
 {{f:msg_timer.c}}
