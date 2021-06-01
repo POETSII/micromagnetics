@@ -20,41 +20,9 @@ which may have been populated.
     </MessageTypes>
     <DeviceTypes>
       <DeviceType id="fd_point">
-        <Properties>
-          <!-- Where am I? (for the Supervisor's benefit) -->
-          <Scalar type="uint16_t" name="x0"/>
-
-          <!-- Effective field coefficients, including the time differential
-               and scaling parameters to ease the burden on the FPU. Currently:
-
-               - exchange_coeff = 2*A*(dt)*gamma/h/mu_0/Ms*damping
-               - dmi_coeff = D*(dt)*gamma/2/h/mu_0/Ms*damping
-               - zeeman_coeff = -H*(dt)*gamma*damping
-
-               Using:
-
-               - A = 4e-13 [J][m-1]
-               - D = 2.7e-4 [J][m-2]
-               - Ms = 9.5e4 [A][m-1]
-               - mu_0 = 4e-7 * pi [kg][s-2][A-2]
-               - H = 15.4 * Ms (or zero)
-               - dt = 1e-13 [s]
-               - h = 1e-9 [m]
-               - gamma = 2.211e5 [A][s][kg-1]
-               - alpha = 1
-               - damping = alpha / (1 + alpha^2)
-
-               Zeeman field is in the (0, 0, 1) direction when H is positive.
-          -->
-          <Scalar type="float" name="exchange_coeff_dt" default="7.409e-11"/>
-          <Scalar type="float" name="dmi_coeff_dt" default="1.250e-2"/>
-          <Scalar type="float" name="zeeman_coeff_dt" default="-6.301e-3"/>
-
-          <!-- When are we done? (does not stop the simulation, only governs
-               exfiltration logic for the final interation -->
-          <Scalar type="uint32_t" name="finishLine"
-                  default="{{v:final_iteration}}"/>
-        </Properties>
+        <Properties><![CDATA[
+{{f:fd_point_properties_1d.c}}
+        ]]></Properties>
         <State>
           <Scalar type="uint8_t" name="did_we_just_update" default="0"/>
           <Scalar type="uint8_t" name="done" default="0"/>
