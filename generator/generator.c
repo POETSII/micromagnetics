@@ -39,7 +39,7 @@ int write_graph_instance(const char* graphInstanceName,
 "    <EdgeInstances>\n"
 "{{f:edge_instances.xml}}"
 "    </EdgeInstances>\n"
-            "  </GraphInstance>", graphInstanceName, graphType);
+"  </GraphInstance>", graphInstanceName, graphType);
 
     fclose(graphInstanceFile);
     return 0;
@@ -363,7 +363,7 @@ int do_it(const unsigned x0Max, const unsigned x1Max, const char* outputPath)
                                EDGE_INSTANCE_FRAGMENT)) return 1;
         if (write_graph_instance("micromagnetics",
                                  GRAPH_INSTANCE_FRAGMENT,
-                                 "micromagnetic_simulation_1d")) return 1;
+                                 "micromagnetic_simulation_1d_type")) return 1;
         rc = template_files(MICROMAGNETICS_TEMPLATE_1D, outputPath,
                             valHandles, valValues, numVals);
     }
@@ -374,7 +374,7 @@ int do_it(const unsigned x0Max, const unsigned x1Max, const char* outputPath)
                                EDGE_INSTANCE_FRAGMENT)) return 1;
         if (write_graph_instance("micromagnetics",
                                  GRAPH_INSTANCE_FRAGMENT,
-                                 "micromagnetic_simulation_2d")) return 1;
+                                 "micromagnetic_simulation_2d_type")) return 1;
         rc = template_files(MICROMAGNETICS_TEMPLATE_2D, outputPath,
                             valHandles, valValues, numVals);
     }

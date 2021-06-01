@@ -5,8 +5,8 @@ which may have been populated.
 
 {{f:preamble.txt}}-->
 
-<Graphs xmlns="https://poets-project.org/schemas/virtual-graph-schema-v2">
-  <GraphType id="micromagnetic_simulation_1d">
+<Graphs xmlns="" appname="micromagnetic_simulation_1d">
+  <GraphType id="micromagnetic_simulation_1d_type">
     <MessageTypes>
       <MessageType id="state"><![CDATA[
 {{f:msg_state.c}}
