@@ -23,45 +23,13 @@ which may have been populated.
         <Properties><![CDATA[
 {{f:fd_point_properties_1d.c}}
         ]]></Properties>
-        <State>
-          <Scalar type="uint8_t" name="did_we_just_update" default="0"/>
-          <Scalar type="uint8_t" name="done" default="0"/>
+        <State><![CDATA[
+{{f:fd_point_state_1d.c}}
+        ]]></State>
 
-          <!-- "Our" state. Note that "iteration" starts at one; this is to
-               stop us stepping forward before receiving our neighbours'
-               initial states (which begin at zero).
-
-               Also, all spins are pointing straight up, unless otherwise
-               stated. -->
-          <Scalar type="uint32_t" name="iteration" default="1"/>
-          <Scalar type="float" name="m_x0" default="0.0"/>
-          <Scalar type="float" name="m_x1" default="0.0"/>
-          <Scalar type="float" name="m_x2" default="1.0"/>
-
-          <!-- Have we sent our initial packet to anyone? -->
-          <Scalar type="uint8_t" name="is_initialised" default="0"/>
-
-          <!-- The state of our neighbours (x0plus, and x0minus) -->
-          <Scalar type="uint32_t" name="iteration_x0plus" default="0"/>
-          <Scalar type="float" name="m_x0_x0plus_even" default="0.0"/>
-          <Scalar type="float" name="m_x1_x0plus_even" default="0.0"/>
-          <Scalar type="float" name="m_x2_x0plus_even" default="0.0"/>
-          <Scalar type="float" name="m_x0_x0plus_odd" default="0.0"/>
-          <Scalar type="float" name="m_x1_x0plus_odd" default="0.0"/>
-          <Scalar type="float" name="m_x2_x0plus_odd" default="0.0"/>
-
-          <Scalar type="uint32_t" name="iteration_x0minus" default="0"/>
-          <Scalar type="float" name="m_x0_x0minus_even" default="0.0"/>
-          <Scalar type="float" name="m_x1_x0minus_even" default="0.0"/>
-          <Scalar type="float" name="m_x2_x0minus_even" default="0.0"/>
-          <Scalar type="float" name="m_x0_x0minus_odd" default="0.0"/>
-          <Scalar type="float" name="m_x1_x0minus_odd" default="0.0"/>
-          <Scalar type="float" name="m_x2_x0minus_odd" default="0.0"/>
-        </State>
         <ReadyToSend><![CDATA[
 {{f:fd_point_rts.c}}
         ]]></ReadyToSend>
-
         <OnCompute><![CDATA[
 {{f:fd_point_on_compute.c}}
         ]]></OnCompute>
