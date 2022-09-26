@@ -1,7 +1,7 @@
 /* Generates micromagnetic XML. */
 
 #include "initial_conditions.h"
-#include "template.h"
+#include "ste.h"
 
 #define DEVICE_INSTANCE_FRAGMENT "fragments/instances/device_instances.xml"
 #define EDGE_INSTANCE_FRAGMENT "fragments/instances/edge_instances.xml"

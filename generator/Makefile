@@ -1,11 +1,11 @@
 STE_DIR = ste
-CFLAGS = -O3 -Wall -pedantic -std=c89 -I./$(TEMPLATE_DIR)
-LFLAGS = -lm -lbsd
+CFLAGS = -O3 -Wall -pedantic -std=c89 -I./$(STE_DIR)
+LFLAGS = -lm
 
-STE_FILES = $(TEMPLATE_DIR)/ste.c \
-            $(TEMPLATE_DIR)/ste.h \
-            $(TEMPLATE_DIR)/string_helpers.c \
-            $(TEMPLATE_DIR)/string_helpers.h
+STE_FILES = $(STE_DIR)/ste.c \
+            $(STE_DIR)/ste.h \
+            $(STE_DIR)/string_helpers.c \
+            $(STE_DIR)/string_helpers.h
 
 all: libgenerator.so generator
 
