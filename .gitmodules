@@ -1,4 +1,4 @@
-[submodule "generator/templater"]
-	path = generator/templater
-	url = https://github.com/mvousden/templater/
-	tag = 1.0.0
+[submodule "generator/ste"]
+	path = generator/ste
+	url = https://github.com/mvousden/ste.git
+	branch = main
