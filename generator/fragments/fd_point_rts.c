@@ -1,6 +1,6 @@
 if (DEVICESTATE(we_can_update_now) or DEVICESTATE(is_initialised) == 0)
 {
-    RTS(state_push);
+    RTS(state_send);
 
     /* Exfiltration modes, either:
      *  - send to the supervisor the first iteration.

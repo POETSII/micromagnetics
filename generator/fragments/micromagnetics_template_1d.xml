@@ -12,11 +12,6 @@ which may have been populated.
 {{f:msg_state.c}}
         ]]></Message>
       </MessageType>
-      <MessageType id="exfiltration">
-        <Message><![CDATA[
-{{f:msg_exfiltration_1d.c}}
-        ]]></Message>
-      </MessageType>
     </MessageTypes>
     <DeviceTypes>
       <DeviceType id="fd_point">
@@ -34,7 +29,7 @@ which may have been populated.
         ]]></OnDeviceIdle>
 
         <!-- Getting the word out to our neighbours. -->
-        <OutputPin name="state_push" messageTypeId="state">
+        <OutputPin name="state_send" messageTypeId="state">
           <OnSend><![CDATA[
 {{f:fd_point_update_state_1d.c}}
 
@@ -43,24 +38,16 @@ which may have been populated.
         </OutputPin>
 
         <!-- Getting the word out to the supervisor. -->
-        <SupervisorOutPin messageTypeId="exfiltration">
+        <SupervisorOutPin messageTypeId="state">
           <OnSend><![CDATA[
 {{f:populate_exfiltration_message_1d.c}}
           ]]></OnSend>
         </SupervisorOutPin>
 
         <!-- Receiving the word from our neighbours. -->
-        <InputPin name="state_recv_x0plus" messageTypeId="state">
+        <InputPin name="state_recv" messageTypeId="state">
           <OnReceive><![CDATA[
-{{f:fd_point_recv_x0plus.c}}
-
-{{f:can_we_update_1d.c}}
-          ]]></OnReceive>
-        </InputPin>
-
-        <InputPin name="state_recv_x0minus" messageTypeId="state">
-          <OnReceive><![CDATA[
-{{f:fd_point_recv_x0minus.c}}
+{{f:fd_point_recv.c}}
 
 {{f:can_we_update_1d.c}}
           ]]></OnReceive>
@@ -83,7 +70,7 @@ which may have been populated.
         <OnStop><![CDATA[
 {{f:super_stop.c}}
         ]]></OnStop>
-        <SupervisorInPin id="" messageTypeId="exfiltration">
+        <SupervisorInPin id="" messageTypeId="state">
           <OnReceive><![CDATA[
 {{f:super_recv_exfiltration_1d.c}}
           ]]></OnReceive>

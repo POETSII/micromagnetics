@@ -1,3 +1,4 @@
+MSG(x0) = DEVICEPROPERTIES(x0);
 MSG(iteration) = DEVICESTATE(iteration);
 MSG(m_x0) = DEVICESTATE(m_x0);
 MSG(m_x1) = DEVICESTATE(m_x1);

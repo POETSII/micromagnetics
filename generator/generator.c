@@ -107,19 +107,19 @@ int write_instances_1d(const unsigned x0Max, const char* deviceInstancePath,
         if (x0 < x0Max)
         {
             fprintf(edgeInstanceFile,
-                    "<EdgeI path=\"%u:state_recv_x0minus-%u:state_push\"/>\n",
+                    "<EdgeI path=\"%u:state_recv-%u:state_send\"/>\n",
                     x0 + 1, x0);
             fprintf(edgeInstanceFile,
-                    "<EdgeI path=\"%u:state_recv_x0plus-%u:state_push\"/>\n",
+                    "<EdgeI path=\"%u:state_recv-%u:state_send\"/>\n",
                     x0, x0 + 1);
         }
         else  /* Periodic! */
         {
             fprintf(edgeInstanceFile,
-                    "<EdgeI path=\"%u:state_recv_x0minus-%u:state_push\"/>\n",
+                    "<EdgeI path=\"%u:state_recv-%u:state_send\"/>\n",
                     0, x0);
             fprintf(edgeInstanceFile,
-                    "<EdgeI path=\"%u:state_recv_x0plus-%u:state_push\"/>\n",
+                    "<EdgeI path=\"%u:state_recv-%u:state_send\"/>\n",
                     x0, 0);
         }
     }
@@ -211,19 +211,19 @@ int write_instances_2d(const unsigned x0Max, const unsigned x1Max,
         if (x0 < x0Max)
         {
             fprintf(edgeInstanceFile,
-                    "<EdgeI path=\"%u_%u:state_recv_x0minus-%u_%u:state_push\"/>\n",
+                    "<EdgeI path=\"%u_%u:state_recv-%u_%u:state_send\"/>\n",
                     x0 + 1, x1, x0, x1);
             fprintf(edgeInstanceFile,
-                    "<EdgeI path=\"%u_%u:state_recv_x0plus-%u_%u:state_push\"/>\n",
+                    "<EdgeI path=\"%u_%u:state_recv-%u_%u:state_send\"/>\n",
                     x0, x1, x0 + 1, x1);
         }
         else  /* Periodic! */
         {
             fprintf(edgeInstanceFile,
-                    "<EdgeI path=\"%u_%u:state_recv_x0minus-%u_%u:state_push\"/>\n",
+                    "<EdgeI path=\"%u_%u:state_recv-%u_%u:state_send\"/>\n",
                     0, x1, x0, x1);
             fprintf(edgeInstanceFile,
-                    "<EdgeI path=\"%u_%u:state_recv_x0plus-%u_%u:state_push\"/>\n",
+                    "<EdgeI path=\"%u_%u:state_recv-%u_%u:state_send\"/>\n",
                     x0, x1, 0, x1);
         }
 
@@ -232,19 +232,19 @@ int write_instances_2d(const unsigned x0Max, const unsigned x1Max,
         if (x1 < x1Max)
         {
             fprintf(edgeInstanceFile,
-                    "<EdgeI path=\"%u_%u:state_recv_x1minus-%u_%u:state_push\"/>\n",
+                    "<EdgeI path=\"%u_%u:state_recv-%u_%u:state_send\"/>\n",
                     x0, x1 + 1, x0, x1);
             fprintf(edgeInstanceFile,
-                    "<EdgeI path=\"%u_%u:state_recv_x1plus-%u_%u:state_push\"/>\n",
+                    "<EdgeI path=\"%u_%u:state_recv-%u_%u:state_send\"/>\n",
                     x0, x1, x0, x1 + 1);
         }
         else  /* Periodic! */
         {
             fprintf(edgeInstanceFile,
-                    "<EdgeI path=\"%u_%u:state_recv_x1minus-%u_%u:state_push\"/>\n",
+                    "<EdgeI path=\"%u_%u:state_recv-%u_%u:state_send\"/>\n",
                     x0, 0, x0, x1);
             fprintf(edgeInstanceFile,
-                    "<EdgeI path=\"%u_%u:state_recv_x1plus-%u_%u:state_push\"/>\n",
+                    "<EdgeI path=\"%u_%u:state_recv-%u_%u:state_send\"/>\n",
                     x0, x1, x0, 0);
         }
 
