@@ -1,8 +1,6 @@
 /* Effective field, multiplied by time differential in the x0, x1, and x2
- * directions. Signage is questionable. */
-float h_eff_dt_x0;
-float h_eff_dt_x1;
-float h_eff_dt_x2;
+ * directions. */
+float h_eff_dt_x[3];
 
 /* The x0 (or x1 or x2) -component of the magnetic moment field value at the
  * neighbour one ahead in the x0 direction in the domain. */
@@ -17,9 +15,7 @@ float m_x2_x0minus;
 
 /* The magnetic moment field differential for this iteration, derived from
  * Euler updating, in the x0, x1, and x2 directions in the codomain. */
-float dm_x0;
-float dm_x1;
-float dm_x2;
+float dm_x[3];
 
 float m_dot_h_dt;
 float target;
