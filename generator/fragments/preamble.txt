@@ -4,12 +4,12 @@ idea being that the generator populates fields in this XML file with
 information. If this is a POETS-ready XML (i.e. it's gone through the
 generator), this file should not contain any moustache brackets.
 
-Regarding conventions: 0, 1, and 2 (ala x0, x1, and x2) are directions in a
-right-handed co-ordinate system (such that e0 cross e1 = e2, where e is a unit
-basis vector in this system). This vector basis is used to describe both the
-position of each cell in the domain (see the x0 and x1 device properties), and
-is also used to describe the magnetic moment field vector at that point (see
-the m_x0, m_x1, and m_x2 device states).
+Regarding conventions: 0, 1, and 2 (ala x[0], x[1], and x[2]) are directions in
+a right-handed co-ordinate system (such that e[0] cross e[1] = e[1], where e is
+a unit basis vector in this system). This vector basis is used to describe both
+the position of each cell in the domain (see the x[0] and x[1] (2d only) device
+properties), and is also used to describe the magnetic moment field vector at
+that point (see the m_x[0], m_x[1], and m_x[2] device states).
 
 The term "x0plus" (or similar) is used in this description, which means, in the
 context of the finite-difference discretisation: "the node one step ahead in

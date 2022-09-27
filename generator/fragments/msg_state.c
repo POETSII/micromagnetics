@@ -1,5 +1,3 @@
-uint16_t x0;
-float m_x0;
-float m_x1;
-float m_x2;
+uint16_t x[1];
+float m_x[3];
 uint32_t iteration;

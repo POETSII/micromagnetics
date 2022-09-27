@@ -1,8 +1,6 @@
 /* "Our" physical state. All spins are pointing "straight up", unless
  * otherwise stated. */
-float m_x0 = 0;
-float m_x1 = 0;
-float m_x2 = 1;
+float m_x[3] = {0, 0, 1};
 
 /* Note that "iteration" starts at one; this is to stop us stepping forward
  * before receiving our neighbours' initial states (which begin at zero). */

@@ -1,8 +1,8 @@
-MSG(x0) = DEVICEPROPERTIES(x0);
+MSG(x)[0] = DEVICEPROPERTIES(x)[0];
 MSG(iteration) = DEVICESTATE(iteration);
-MSG(m_x0) = DEVICESTATE(m_x0);
-MSG(m_x1) = DEVICESTATE(m_x1);
-MSG(m_x2) = DEVICESTATE(m_x2);
+MSG(m_x)[0] = DEVICESTATE(m_x)[0];
+MSG(m_x)[1] = DEVICESTATE(m_x)[1];
+MSG(m_x)[2] = DEVICESTATE(m_x)[2];
 
 /* Set this to prevent on ReadyToSend from trying to fire another message after
  * this one. */

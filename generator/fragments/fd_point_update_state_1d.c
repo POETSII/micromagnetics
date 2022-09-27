@@ -51,20 +51,20 @@ h_eff_dt_x2 -= DEVICEPROPERTIES(dmi_coeff_dt) *
 h_eff_dt_x2 += DEVICEPROPERTIES(zeeman_coeff_dt);
 
 /* Precessionless LLG, with Euler (see p30 of MLV's thesis) */
-m_dot_h_dt = (DEVICESTATE(m_x0) * h_eff_dt_x0) +
-    (DEVICESTATE(m_x1) * h_eff_dt_x1) +
-    (DEVICESTATE(m_x2) * h_eff_dt_x2);
+m_dot_h_dt = (DEVICESTATE(m_x)[0] * h_eff_dt_x0) +
+    (DEVICESTATE(m_x)[1] * h_eff_dt_x1) +
+    (DEVICESTATE(m_x)[2] * h_eff_dt_x2);
 
-dm_x0 = m_dot_h_dt * DEVICESTATE(m_x0) - h_eff_dt_x0;
-dm_x1 = m_dot_h_dt * DEVICESTATE(m_x1) - h_eff_dt_x1;
-dm_x2 = m_dot_h_dt * DEVICESTATE(m_x2) - h_eff_dt_x2;
+dm_x0 = m_dot_h_dt * DEVICESTATE(m_x)[0] - h_eff_dt_x0;
+dm_x1 = m_dot_h_dt * DEVICESTATE(m_x)[1] - h_eff_dt_x1;
+dm_x2 = m_dot_h_dt * DEVICESTATE(m_x)[2] - h_eff_dt_x2;
 
 /* Step forward in time (Euler). Note that dt is incorporated into the
  * effective field coefficients (so make the FPU less confused, and the
  * compiler less stressed). */
 DEVICESTATE(iteration) = DEVICESTATE(iteration) + 1;
-DEVICESTATE(m_x0) = DEVICESTATE(m_x0) + dm_x0;
-DEVICESTATE(m_x1) = DEVICESTATE(m_x1) + dm_x1;
-DEVICESTATE(m_x2) = DEVICESTATE(m_x2) + dm_x2;
+DEVICESTATE(m_x)[0] = DEVICESTATE(m_x)[0] + dm_x0;
+DEVICESTATE(m_x)[1] = DEVICESTATE(m_x)[1] + dm_x1;
+DEVICESTATE(m_x)[2] = DEVICESTATE(m_x)[2] + dm_x2;
 
 {{f:normalise_fisr.c}}

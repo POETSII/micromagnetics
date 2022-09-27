@@ -1,6 +1,6 @@
 /* Write exfiltrated data to file. */
 fprintf(SUPSTATE(dataFile), "%u,%u,%f,%f,%f\n",
-        MSG(x0), MSG(iteration), MSG(m_x0), MSG(m_x1), MSG(m_x2));
+        MSG(x)[0], MSG(iteration), MSG(m_x)[0], MSG(m_x)[1], MSG(m_x)[2]);
 
 /* Has this device just crossed the finish line? If so, count it. */
 if (MSG(iteration) == SUPPROPERTIES(finishLine))
