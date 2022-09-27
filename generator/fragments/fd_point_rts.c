@@ -1,4 +1,4 @@
-if (DEVICESTATE(did_we_just_update) or DEVICESTATE(is_initialised) == 0)
+if (DEVICESTATE(we_can_update_now) or DEVICESTATE(is_initialised) == 0)
 {
     RTS(state_push);
 

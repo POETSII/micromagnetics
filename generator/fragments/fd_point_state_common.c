@@ -12,5 +12,5 @@ uint32_t iteration = 1;
 uint8_t is_initialised = 0;
 
 /* Housekeeping */
-uint8_t did_we_just_update = 0;
+uint8_t we_can_update_now = 0;
 uint8_t done = 0;

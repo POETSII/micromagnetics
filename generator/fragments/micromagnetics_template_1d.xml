@@ -36,6 +36,8 @@ which may have been populated.
         <!-- Getting the word out to our neighbours. -->
         <OutputPin name="state_push" messageTypeId="state">
           <OnSend><![CDATA[
+{{f:fd_point_update_state_1d.c}}
+
 {{f:populate_state_message.c}}
           ]]></OnSend>
         </OutputPin>
@@ -52,7 +54,7 @@ which may have been populated.
           <OnReceive><![CDATA[
 {{f:fd_point_recv_x0plus.c}}
 
-{{f:check_increment_state_1d.c}}
+{{f:can_we_update_1d.c}}
           ]]></OnReceive>
         </InputPin>
 
@@ -60,7 +62,7 @@ which may have been populated.
           <OnReceive><![CDATA[
 {{f:fd_point_recv_x0minus.c}}
 
-{{f:check_increment_state_1d.c}}
+{{f:can_we_update_1d.c}}
           ]]></OnReceive>
         </InputPin>
       </DeviceType>

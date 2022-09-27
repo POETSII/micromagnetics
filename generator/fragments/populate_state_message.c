@@ -5,7 +5,7 @@ MSG(m_x2) = DEVICESTATE(m_x2);
 
 /* Set this to prevent on ReadyToSend from trying to fire another message after
  * this one. */
-DEVICESTATE(did_we_just_update) = 0;
+DEVICESTATE(we_can_update_now) = 0;
 
 /* Set this to prevent OnIdle from trying to fire another initialisation
  * message. */
