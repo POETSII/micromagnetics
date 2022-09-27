@@ -1,11 +1,6 @@
-if (deviceState->did_we_just_update || deviceState->is_initialised == 0)
+if (DEVICESTATE(did_we_just_update) or DEVICESTATE(is_initialised) == 0)
 {
-    *readyToSend |= RTS_FLAG_state_push;
-
-    /* Starts the timer (device "0" only). */
-    if (deviceState->iteration == 1 &&
-        deviceProperties->x0 == 0 && deviceProperties->x1 == 0)
-        *readyToSend |= RTS_FLAG_starttimer;
+    RTS(state_push);
 
     /* Exfiltration modes, either:
      *  - send to the supervisor the first iteration.
@@ -25,6 +20,6 @@ if (deviceState->did_we_just_update || deviceState->is_initialised == 0)
     if (deviceState->iteration >= deviceProperties->finishLine &&
         deviceState->done == 0)
     {
-        *readyToSend |= RTS_FLAG_exfiltrate;
+        RTSSUP();
     }
 }

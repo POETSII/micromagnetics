@@ -1,0 +1,1 @@
+if (SUPSTATE(dataFile) != 0) fclose(SUPSTATE(dataFile));

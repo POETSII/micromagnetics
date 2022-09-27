@@ -1,3 +1,7 @@
+/* When are we done? (does not stop the simulation, only governs exfiltration
+ * logic for the final interation. */
+uint32_t finishLine = {{v:final_iteration}};
+
 /* Effective field coefficients, including the time differential and scaling
  * parameters to ease the burden on the FPU/optimiser. Currently:
  *
@@ -22,7 +26,3 @@
 float exchange_coeff_dt = 7.409e-11;
 float dmi_coeff_dt = 1.250e-2;
 float zeeman_coeff_dt = -6.301e-3;
-
-/* When are we done? (does not stop the simulation, only governs exfiltration
- * logic for the final interation. */
-uint32_t finishLine = {{v:final_iteration}};

@@ -83,18 +83,17 @@ int write_instances_1d(const unsigned x0Max, const char* deviceInstancePath,
     /* Iterate over each device. */
     for (x0 = 0; x0 <= x0Max; x0++)
     {
-        /* Default properties */
-        sprintf(props, "\"x0\": %u", x0);
+        /* Properties */
+        sprintf(props, "%u", x0);
 
         /* Initial conditions at x0. */
-        if (x0 == 0) strcpy(state,
-                            "\"m_x0\": 0.0, \"m_x1\": 1.0, \"m_x2\": 0.0");
+        if (x0 == 0) strcpy(state, "0.0,1.0,0.0");
 
         /* Write the device entry. */
-        fprintf(deviceInstanceFile, "<DevI id=\"%u\" type=\"fd_point\">", x0);
-        if (strlen(props) > 0) fprintf(deviceInstanceFile, "<P>%s</P>", props);
-        if (strlen(state) > 0) fprintf(deviceInstanceFile, "<S>%s</S>", state);
-        fprintf(deviceInstanceFile, "</DevI>\n");
+        fprintf(deviceInstanceFile, "<DevI id=\"%u\" type=\"fd_point\"", x0);
+        if (strlen(props) > 0) fprintf(deviceInstanceFile, " P=\"%s\"", props);
+        if (strlen(state) > 0) fprintf(deviceInstanceFile, " S=\"%s\"", state);
+        fprintf(deviceInstanceFile, "/>\n");
 
         /* Clear properties and state for device entries. */
         for (bufferIndex = 0; bufferIndex < JSON_BUFFER_SIZE; bufferIndex++)
@@ -123,15 +122,9 @@ int write_instances_1d(const unsigned x0Max, const char* deviceInstancePath,
                     "<EdgeI path=\"%u:state_recv_x0plus-%u:state_push\"/>\n",
                     x0, 0);
         }
-
-        /* Supervisor edge. */
-        fprintf(edgeInstanceFile,
-                "<EdgeI path=\":exfiltrate-%u:exfiltrate\"/>\n", x0);
     }
 
-    /* Special case - device zero starts the timer. */
-    fprintf(edgeInstanceFile, "<EdgeI path=\":starttimer-0:starttimer\"/>\n");
-
+    /* And away we go! */
     fclose(deviceInstanceFile);
     fclose(edgeInstanceFile);
     return 0;
