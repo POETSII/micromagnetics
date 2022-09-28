@@ -25,7 +25,7 @@ which may have been populated.
 {{f:fd_point_rts.c}}
         ]]></ReadyToSend>
         <OnDeviceIdle><![CDATA[
-{{f:fd_point_on_compute.c}}
+{{f:fd_point_on_idle.c}}
         ]]></OnDeviceIdle>
 
         <!-- Getting the word out to our neighbours. -->
@@ -47,7 +47,7 @@ which may have been populated.
         <!-- Receiving the word from our neighbours. -->
         <InputPin name="state_recv" messageTypeId="state">
           <OnReceive><![CDATA[
-{{f:fd_point_recv.c}}
+{{f:fd_point_recv_1d.c}}
 
 {{f:can_we_update_1d.c}}
           ]]></OnReceive>
