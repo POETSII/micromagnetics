@@ -40,7 +40,7 @@ simulation, which may have been populated.
         <!-- Getting the word out to the supervisor. -->
         <SupervisorOutPin messageTypeId="state">
           <OnSend><![CDATA[
-{{f:populate_exfiltration_message_1d.c}}
+{{f:populate_exfiltration_message.c}}
           ]]></OnSend>
         </SupervisorOutPin>
 
