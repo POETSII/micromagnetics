@@ -1,10 +1,16 @@
 {{f:fd_point_state_common.c}}
 
-/* The state of our neighbours (x0plus, and x0minus) */
-uint32_t iteration_x0plus = 0;
-uint32_t iteration_x0minus = 0;
+/* The state of our neighbours:
+ *  - First index: In what direction does the neighbour exist? (always 0 for
+ *    the 1d case).
+ *  - Second index: Is the neighbour ahead (=1) or behind (=0) in that
+ *    direction?
+ */
+uint32_t iteration_neighbour[1][2] = {{0, 0}};
 
-/* This monster array is broken up as follows:
+/* And you thought the first one was bad.
+ *
+ * This monster array is broken up as follows:
  *  - First index: Is the data stored for the odd (=1) or even (=0)
  *    iteration? (think GALS synchronisation).
  *  - Second index: In what direction does the neighbour exist? (always 0 for

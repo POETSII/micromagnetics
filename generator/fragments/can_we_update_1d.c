@@ -1,7 +1,7 @@
 /* Now we need to check if our neighbours satisfy the update condition. If they
  * do, we update our state. */
-if (DEVICESTATE(iteration_x0plus) >= DEVICESTATE(iteration) and
-    DEVICESTATE(iteration_x0minus) >= DEVICESTATE(iteration))
+if (DEVICESTATE(iteration_neighbour[0][0]) >= DEVICESTATE(iteration) and
+    DEVICESTATE(iteration_neighbour[0][1]) >= DEVICESTATE(iteration))
 {
     /* This variable notifies the ReadyToSend (RTS) handler that
      * we've just updated. Once read, the output pin handler will set this to
