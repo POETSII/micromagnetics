@@ -72,7 +72,7 @@ simulation, which may have been populated.
         ]]></OnStop>
         <SupervisorInPin id="" messageTypeId="state">
           <OnReceive><![CDATA[
-{{f:super_recv_exfiltration_1d.c}}
+{{f:super_recv_exfiltration.c}}
           ]]></OnReceive>
         </SupervisorInPin>
       </SupervisorType>
