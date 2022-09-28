@@ -1,7 +1,5 @@
 /* Where am I? */
-#define DIM {{v:dim}}
-uint16_t x[DIM];
-#undef DIM
+uint16_t x[{{v:dim}}];
 
 /* When are we done? (does not stop the simulation, only governs exfiltration
  * logic for the final interation. */
