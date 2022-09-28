@@ -24,9 +24,9 @@ simulation, which may have been populated.
         <ReadyToSend><![CDATA[
 {{f:fd_point_rts.c}}
         ]]></ReadyToSend>
-        <OnDeviceIdle><![CDATA[
-{{f:fd_point_on_idle.c}}
-        ]]></OnDeviceIdle>
+        <OnInit><![CDATA[
+{{f:fd_point_on_init.c}}
+        ]]></OnInit>
 
         <!-- Getting the word out to our neighbours. -->
         <OutputPin name="state_send" messageTypeId="state">

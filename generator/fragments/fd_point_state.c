@@ -14,8 +14,8 @@ uint8_t is_initialised = 0;
  *    the 1d case).
  *  - Second index: Is the neighbour ahead (=1) or behind (=0) in that
  *    direction?
- */
-uint32_t iteration_neighbour[1][2] = {{0, 0}};
+ * Initialised with zeroes in OnInit. */
+uint32_t iteration_neighbour[{{v:dim}}][2];
 
 /* And you thought the first one was bad.
  *
@@ -28,21 +28,8 @@ uint32_t iteration_neighbour[1][2] = {{0, 0}};
  *    direction?
  *  - Fourth index: Index of the magnetic moment vector (always 0, 1, or 2, as
  *    they are three-dimensional vectors).
- * Good luck! */
-float m_x_neighbour[2][1][2][3] = {
-    { /* Even */
-        {  /* Neighbours in direction zero */
-            {0, 0, 0},  /* Ahead */
-            {0, 0, 0}   /* Behind */
-        }
-    },
-    { /* Odd */
-        { /* Neighbours in direction zero */
-            {0, 0, 0}, /* Ahead */
-            {0, 0, 0}  /* Behind */
-        }
-    }
-};
+ * Initialised with zeroes in OnInit. Good luck! */
+float m_x_neighbour[2][{{v:dim}}][2][3];
 
 /* Housekeeping */
 uint8_t we_can_update_now = 0;
