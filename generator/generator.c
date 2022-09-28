@@ -6,8 +6,7 @@
 #define DEVICE_INSTANCE_FRAGMENT "fragments/instances/device_instances.xml"
 #define EDGE_INSTANCE_FRAGMENT "fragments/instances/edge_instances.xml"
 #define GRAPH_INSTANCE_FRAGMENT "fragments/instances/graph_instance.xml"
-#define MICROMAGNETICS_TEMPLATE_1D "fragments/micromagnetics_template_1d.xml"
-#define MICROMAGNETICS_TEMPLATE_2D "fragments/micromagnetics_template_2d.xml"
+#define MICROMAGNETICS_TEMPLATE "fragments/micromagnetics_template.xml"
 #define JSON_BUFFER_SIZE 1000
 #define OUTPATH_BUFFER_SIZE 1000
 #define VALUE_BUFFER_SIZE 64
@@ -356,23 +355,17 @@ int do_it(const unsigned x0Max, const unsigned x1Max, const char* outputPath)
     {
         if (write_instances_1d(x0Max, DEVICE_INSTANCE_FRAGMENT,
                                EDGE_INSTANCE_FRAGMENT)) return 1;
-        if (write_graph_instance("micromagnetics",
-                                 GRAPH_INSTANCE_FRAGMENT,
-                                 "micromagnetic_simulation_type")) return 1;
-        rc = template_files(MICROMAGNETICS_TEMPLATE_1D, outputPath,
-                            valHandles, valValues, numVals);
     }
-
     else  /* 2D */
     {
         if (write_instances_2d(x0Max, x1Max, DEVICE_INSTANCE_FRAGMENT,
                                EDGE_INSTANCE_FRAGMENT)) return 1;
-        if (write_graph_instance("micromagnetics",
-                                 GRAPH_INSTANCE_FRAGMENT,
-                                 "micromagnetic_simulation_2d_type")) return 1;
-        rc = template_files(MICROMAGNETICS_TEMPLATE_2D, outputPath,
-                            valHandles, valValues, numVals);
     }
+    if (write_graph_instance("micromagnetics",
+                             GRAPH_INSTANCE_FRAGMENT,
+                             "micromagnetic_simulation_type")) return 1;
+    rc = template_files(MICROMAGNETICS_TEMPLATE, outputPath,
+                        valHandles, valValues, numVals);
 
     for (valIndex = 0; valIndex < numVals; free(valValues[valIndex++]));
     free(valHandles);
