@@ -19,7 +19,7 @@ simulation, which may have been populated.
 {{f:fd_point_properties.c}}
         ]]></Properties>
         <State><![CDATA[
-{{f:fd_point_state_1d.c}}
+{{f:fd_point_state.c}}
         ]]></State>
         <ReadyToSend><![CDATA[
 {{f:fd_point_rts.c}}
