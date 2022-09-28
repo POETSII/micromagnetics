@@ -337,10 +337,11 @@ int do_it(const unsigned x0Max, const unsigned x1Max, const char* outputPath)
     /* Setting values for the templater. We care about:
      *  - final_iteration
      *  - node_count */
-    numVals = 2;
+    numVals = 3;
     valHandles = (char**) malloc(numVals * sizeof(char*));
     valHandles[0] = "final_iteration";
     valHandles[1] = "node_count";
+    valHandles[2] = "dim";
 
     valValues = (char**) malloc(numVals * sizeof(char*));
     for (valIndex = 0; valIndex < numVals; valIndex++)
@@ -348,6 +349,7 @@ int do_it(const unsigned x0Max, const unsigned x1Max, const char* outputPath)
             malloc(VALUE_BUFFER_SIZE * sizeof(char*));  /* Yikes */
     sprintf(valValues[0], "%u", FINAL_ITERATION);
     sprintf(valValues[1], "%u", (x0Max + 1) * (x1Max + 1));
+    sprintf(valValues[2], "%u", x1Max == 0 ? 1 : 2);
 
     /* Make stuff. */
     if (x1Max == 0)  /* 1D */
@@ -356,7 +358,7 @@ int do_it(const unsigned x0Max, const unsigned x1Max, const char* outputPath)
                                EDGE_INSTANCE_FRAGMENT)) return 1;
         if (write_graph_instance("micromagnetics",
                                  GRAPH_INSTANCE_FRAGMENT,
-                                 "micromagnetic_simulation_1d_type")) return 1;
+                                 "micromagnetic_simulation_type")) return 1;
         rc = template_files(MICROMAGNETICS_TEMPLATE_1D, outputPath,
                             valHandles, valValues, numVals);
     }
