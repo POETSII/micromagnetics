@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <!--
-This XML is a template that describes one-dimensional micromagnetic simulation,
-which may have been populated.
+This XML is a template that describes {{v:dim}}-dimensional micromagnetic
+simulation, which may have been populated.
 
 {{f:preamble.txt}}-->
-<Graphs xmlns="" appname="micromagnetic_simulation_1d">
-  <GraphType id="micromagnetic_simulation_1d_type">
+<Graphs xmlns="" appname="micromagnetic_simulation">
+  <GraphType id="micromagnetic_simulation_type">
     <MessageTypes>
       <MessageType id="state">
         <Message><![CDATA[
@@ -16,7 +16,7 @@ which may have been populated.
     <DeviceTypes>
       <DeviceType id="fd_point">
         <Properties><![CDATA[
-{{f:fd_point_properties_1d.c}}
+{{f:fd_point_properties.c}}
         ]]></Properties>
         <State><![CDATA[
 {{f:fd_point_state_1d.c}}

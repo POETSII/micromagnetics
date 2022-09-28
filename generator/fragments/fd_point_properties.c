@@ -1,3 +1,8 @@
+/* Where am I? */
+#define DIM {{v:dim}}
+uint16_t x[DIM];
+#undef DIM
+
 /* When are we done? (does not stop the simulation, only governs exfiltration
  * logic for the final interation. */
 uint32_t finishLine = {{v:final_iteration}};
