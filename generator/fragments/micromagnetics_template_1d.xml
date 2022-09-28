@@ -49,7 +49,7 @@ simulation, which may have been populated.
           <OnReceive><![CDATA[
 {{f:fd_point_recv.c}}
 
-{{f:can_we_update_1d.c}}
+{{f:can_we_update.c}}
           ]]></OnReceive>
         </InputPin>
       </DeviceType>
