@@ -2,6 +2,5 @@ generator
 *.so
 micromagnetic_simulation.xml
 fragments/instances/*.xml
-fragments/parameters/*.txt
 .ipynb_checkpoints/
 __pycache__/
