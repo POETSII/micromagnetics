@@ -31,7 +31,7 @@ simulation, which may have been populated.
         <!-- Getting the word out to our neighbours. -->
         <OutputPin name="state_send" messageTypeId="state">
           <OnSend><![CDATA[
-{{f:fd_point_update_state_1d.c}}
+{{f:fd_point_update_state.c}}
 
 {{f:populate_state_message.c}}
           ]]></OnSend>
