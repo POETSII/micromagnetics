@@ -47,7 +47,7 @@ simulation, which may have been populated.
         <!-- Receiving the word from our neighbours. -->
         <InputPin name="state_recv" messageTypeId="state">
           <OnReceive><![CDATA[
-{{f:fd_point_recv_1d.c}}
+{{f:fd_point_recv.c}}
 
 {{f:can_we_update_1d.c}}
           ]]></OnReceive>
