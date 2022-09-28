@@ -1,4 +1,6 @@
-MSG(x)[0] = DEVICEPROPERTIES(x)[0];
+/* Populate outbound state message. */
+int dim;
+for (dim = 0; dim < {{v:dim}}; dim++) MSG(x)[dim] = DEVICEPROPERTIES(x)[dim];
 MSG(iteration) = DEVICESTATE(iteration);
 MSG(m_x)[0] = DEVICESTATE(m_x)[0];
 MSG(m_x)[1] = DEVICESTATE(m_x)[1];
