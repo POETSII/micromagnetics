@@ -1,3 +1,7 @@
+/* We don't update our state before we burst our information, since we don't
+ * know our neighbours' state yet. No indentation for sanity. */
+if (DEVICESTATE(is_initialised) != 0) {
+
 /* Effective field, multiplied by time differential in the x0, x1, and x2
  * directions. */
 float h_eff_dt_x[3] = {0, 0, 0};
@@ -123,3 +127,5 @@ for (int m_dim = 0; m_dim < 3; m_dim++)
     DEVICESTATE(m_x)[m_dim] = DEVICESTATE(m_x)[m_dim] + dm_x[m_dim];
 
 {{f:normalise_fisr.c}}
+
+}  /* See the iteration predicate at the top of this handler. *;
