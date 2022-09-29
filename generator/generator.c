@@ -83,10 +83,10 @@ int write_instances_1d(const unsigned x0Max, const char* deviceInstancePath,
     for (x0 = 0; x0 <= x0Max; x0++)
     {
         /* Properties */
-        sprintf(props, "%u", x0);
+        sprintf(props, "{%u}", x0);
 
         /* Initial conditions at x0. */
-        if (x0 == 0) strcpy(state, "0.0,1.0,0.0");
+        if (x0 == 0) strcpy(state, "{0.0,1.0,0.0}");
 
         /* Write the device entry. */
         fprintf(deviceInstanceFile, "<DevI id=\"x0%u\" type=\"fd_point\"", x0);
@@ -182,13 +182,13 @@ int write_instances_2d(const unsigned x0Max, const unsigned x1Max,
     for (x0 = 0; x0 <= x0Max; x0++) for (x1 = 0; x1 <= x1Max; x1++)
     {
         /* Default properties */
-        sprintf(props, "%u,%u", x0, x1);
+        sprintf(props, "{%u,%u}", x0, x1);
 
         /* Plop a skyrmion in there, normalising the co-ordinates first. */
         skyrmion_profile(&mx0, &mx1, &mx2,
                          x0 - (float)(x0Max / 2), x1 - (float)(x1Max / 2), 0,
                          x0Max / 3);
-        sprintf(state, "%f,%f,%f", mx0, mx1, mx2);
+        sprintf(state, "{%f,%f,%f}", mx0, mx1, mx2);
 
         /* Write the device entry. */
         fprintf(deviceInstanceFile,
