@@ -12,6 +12,7 @@ if (MSG(iteration) == SUPPROPERTIES(finishLine))
     /* Post when we're done. */
     if (SUPSTATE(nodesFinished) == SUPPROPERTIES(nodeCount))
         Super::post("Micromagnetic simulation complete.");
+    Super::stop_application();
 }
 
 /* Stop the timer, if this is the last device to cross the finish line.
