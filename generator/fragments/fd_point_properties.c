@@ -1,5 +1,5 @@
 /* Position co-ordinate for this finite-difference cell */
-uint16_t x[{{v:dim}}];
+int16_t x[{{v:dim}}];
 
 /* We stop after this many iterations. */
 uint32_t finishLine = {{v:final_iteration}};

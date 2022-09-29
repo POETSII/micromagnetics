@@ -1,5 +1,5 @@
 /* Position co-ordinate for the sending finite-difference cell */
-uint16_t x[{{v:dim}}];
+int16_t x[{{v:dim}}];
 
 /* Magnetic moment vector of the sender. */
 float m_x[3];

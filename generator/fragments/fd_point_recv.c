@@ -1,6 +1,11 @@
 for (int dim = 0; dim < {{v:dim}}; dim++)
 {
-    if (MSG(x)[dim] < DEVICEPROPERTIES(x)[dim])
+    /* Behind (and n->0 for periodicity). The first condition asks "are you
+     * directly behind?" and the second condition asks "are you really far
+     * ahead of me, so far in fact, that I suspect you're a wrap-around
+     * device?" */
+    if (DEVICEPROPERTIES(x)[dim] - MSG(x)[dim] == 1 or
+        MSG(x)[dim] > DEVICEPROPERTIES(x)[dim] + 1)
     {
         DEVICESTATE(iteration_neighbour[dim][0]) = MSG(iteration);
         if (DEVICESTATE(iteration_neighbour[dim][0]) & 1)
@@ -16,7 +21,7 @@ for (int dim = 0; dim < {{v:dim}}; dim++)
             DEVICESTATE(m_x_neighbour)[0][dim][0][2] = MSG(m_x)[2];
         }
     }
-    else
+    else /* Ahead, by elimination */
     {
         if (DEVICESTATE(iteration_neighbour[dim][1]) & 1)
         {
