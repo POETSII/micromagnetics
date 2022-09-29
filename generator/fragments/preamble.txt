@@ -2,18 +2,55 @@ It is to be populated with a series of files found in moustache brackets (two
 sequent '{' characters, and two sequent '}' characters, without quotes). The
 idea being that the generator populates fields in this XML file with
 information. If this is a POETS-ready XML (i.e. it's gone through the
-generator), this file should not contain any moustache brackets.
+generator), this file should not contain any moustache brackets. Familiarity
+with the POETS application language is assumed - if you don't have this, see
+Volume II of the Orchestrator documentation.
+
+Physics and Mathematics Definitions
+---
+
+This XML represents an aphysical relaxation on a helimagnetic
+material. Isotropic and Dzyaloshinskii-Moriya exchange effects are modelled, as
+well as Zeeman effects from an externally-applied magnetic field held at a
+particular strength. The properties governing these effects are defined in
+device properties. Precessionless Landau-Lifshitz-Gilbert is used as the
+relaxation mechanism, which is integrated forward in time using an explicit
+integration scheme with a fixed time step. These dynamics are computed in the
+output pin. The simulation terminates after a fixed number of iterations
+(i.e. simulated time).
 
 Regarding conventions: 0, 1, and 2 (ala x[0], x[1], and x[2]) are directions in
-a right-handed co-ordinate system (such that e[0] cross e[1] = e[1], where e is
-a unit basis vector in this system). This vector basis is used to describe both
-the position of each cell in the domain (see the x[0] and x[1] (2d only) device
-properties), and is also used to describe the magnetic moment field vector at
-that point (see the m_x[0], m_x[1], and m_x[2] device states).
+a right-handed co-ordinate system (such that e[0] cross e[1] = e[2], where e is
+a set of natural unit basis vectors in this system). This vector basis is used
+to describe both the position of each cell in the domain (see the "x" array in
+device properties), and is also used to describe the magnetic moment field
+vector at that point (see the "m_x" array in device state).
 
-The term "x0plus" (or similar) is used in this description, which means, in the
-context of the finite-difference discretisation: "the node one step ahead in
-the 0 direction from this node". The step length is represented by `h` in the
-mathematics (same for each direction), and is not explictly stated as a
-property or state in this XML, but is incorporated into the interaction
-coefficients.
+Each device represents a point in a finite-difference problem. The step length
+between each device is `h` (constant). This step length is not explicitly
+states as a property or state in this application description, but is
+incorporated directly into the interaction coefficients - the comment in device
+properties explains this.
+
+Computation/Communication Trajectory
+---
+
+This application uses the GALS (Globally-Asynchronous, Locally-Synchronous)
+communication pattern to eliminate data shear. To kick this off, each device
+starts at iteration one, but 'sees' its neighbours at iteration zero. As part
+of the OnInit compute trajectory, devices burst their initial magnetisation
+data to their neighbours, along with an "iteration number" of 1. As per
+traditional GALS, once a device has received "up-to-date" magnetisation data
+from its neighbours, the device updates its magnetisation data using the
+physics described above, and sends this new magnetisation data to its
+neighbours, along with an iteration number.
+
+This application assumes that supervisor output pins on normal devices are
+"fired" after all other output pins. The trajectory of the simulation won't be
+significantly affected by this, but output data may be "out" by one iteration
+if this assumption is broken.
+
+Once the iteration state field of a device reaches a certain threshold, the
+device sends a message to its supervisor, exfiltrating its data. The device
+then becomes quiescent - it will still consume input packets, but it will not
+send anything further.
