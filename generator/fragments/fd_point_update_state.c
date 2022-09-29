@@ -128,4 +128,4 @@ for (int m_dim = 0; m_dim < 3; m_dim++)
 
 {{f:normalise_fisr.c}}
 
-}  /* See the iteration predicate at the top of this handler. *;
+}  /* See the iteration predicate at the top of this handler. */
