@@ -1,8 +1,7 @@
-/* Where am I? */
+/* Position co-ordinate for this finite-difference cell */
 uint16_t x[{{v:dim}}];
 
-/* When are we done? (does not stop the simulation, only governs exfiltration
- * logic for the final interation. */
+/* We stop after this many iterations. */
 uint32_t finishLine = {{v:final_iteration}};
 
 /* Effective field coefficients, including the time differential and scaling

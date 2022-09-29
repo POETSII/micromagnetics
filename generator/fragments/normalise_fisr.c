@@ -1,12 +1,15 @@
 /* Normalise using Fast Inverse Square Root. Never thought I'd need this again!
  * Two Newton-Raphson iterations gets us to e-6 accuracy at |m|=1. */
-target = (DEVICESTATE(m_x)[0] * DEVICESTATE(m_x)[0]) +
-    (DEVICESTATE(m_x)[1] * DEVICESTATE(m_x)[1]) +
-    (DEVICESTATE(m_x)[2] * DEVICESTATE(m_x)[2]);
-fisr = {target};
+float target = 0;
+for (int m_dim = 0; m_dim < 3; m_dim++)
+    target += DEVICESTATE(m_x)[m_dim] * DEVICESTATE(m_x)[m_dim];
+
+union {
+    float f;
+    uint32_t i;
+} fisr = {target};
 fisr.i = 0x5f3759df - ( fisr.i >> 1 );
-fisr.f *= (1.5 - ( target * 0.5 * fisr.f * fisr.f));  /* First NR */
-fisr.f *= (1.5 - ( target * 0.5 * fisr.f * fisr.f));  /* Second NR */
-DEVICESTATE(m_x)[0] *= fisr.f;
-DEVICESTATE(m_x)[1] *= fisr.f;
-DEVICESTATE(m_x)[2] *= fisr.f;
+for (int it = 0; it < 2; it++)  /* Two NR iterations */
+    fisr.f *= (1.5 - ( target * 0.5 * fisr.f * fisr.f));
+
+for (int m_dim = 0; m_dim < 3; DEVICESTATE(m_x)[m_dim++] *= fisr.f);

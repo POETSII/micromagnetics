@@ -1,21 +1,10 @@
 /* We don't update our state before we burst our information, since we don't
- * know our neighbours' state yet. No indentation for sanity. */
+ * know our neighbours' state yet. Search tag (l1). */
 if (DEVICESTATE(is_initialised) != 0) {
 
 /* Effective field, multiplied by time differential in the x0, x1, and x2
  * directions. */
 float h_eff_dt_x[3] = {0, 0, 0};
-
-/* The magnetic moment field differential for this iteration, derived from
- * Euler updating, in the x0, x1, and x2 directions in the codomain. */
-float dm_x[3];
-
-float m_dot_h_dt;
-float target;
-union {
-    float f;
-    uint32_t i;
-} fisr;    /* For fast-inverse square root. */
 
 /* Which buffer should we use for neighbour's magnetisation? Odd or even? */
 size_t odd_or_even = DEVICESTATE(iteration) & 1;
@@ -110,22 +99,26 @@ h_eff_dt_x[2] += DEVICEPROPERTIES(dmi_coeff_dt) *
 /* Zeeman energy (influence of big external magnet). */
 h_eff_dt_x[2] += DEVICEPROPERTIES(zeeman_coeff_dt);
 
-/* Precessionless LLG, with Euler (see p30 of MLV's thesis) */
-m_dot_h_dt = (DEVICESTATE(m_x)[0] * h_eff_dt_x[0]) +
+/* Precessionless LLG, with Euler. */
+float m_dot_h_dt = (DEVICESTATE(m_x)[0] * h_eff_dt_x[0]) +
     (DEVICESTATE(m_x)[1] * h_eff_dt_x[1]) +
     (DEVICESTATE(m_x)[2] * h_eff_dt_x[2]);
 
+/* Here, dm_x is the magnetic moment field differential for this iteration,
+ * derived from Euler updating, in the x0, x1, and x2 directions in the
+ * codomain. */
+float dm_x[3];
 dm_x[0] = m_dot_h_dt * DEVICESTATE(m_x)[0] - h_eff_dt_x[0];
 dm_x[1] = m_dot_h_dt * DEVICESTATE(m_x)[1] - h_eff_dt_x[1];
 dm_x[2] = m_dot_h_dt * DEVICESTATE(m_x)[2] - h_eff_dt_x[2];
 
-/* Step forward in time (Euler). Note that dt is incorporated into the
- * effective field coefficients (so make the FPU less confused, and the
- * compiler less stressed). */
+/* Step forward in time (Euler), updating the magnetic moment vector at this
+ * point. Note that dt is incorporated into the effective field coefficients
+ * (so make the FPU less confused, and the compiler less stressed). */
 DEVICESTATE(iteration) = DEVICESTATE(iteration) + 1;
 for (int m_dim = 0; m_dim < 3; m_dim++)
     DEVICESTATE(m_x)[m_dim] = DEVICESTATE(m_x)[m_dim] + dm_x[m_dim];
 
 {{f:normalise_fisr.c}}
 
-}  /* See the iteration predicate at the top of this handler. */
+}  /* Search tag (l1). */

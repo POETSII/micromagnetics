@@ -2,9 +2,8 @@
 int dim;
 for (dim = 0; dim < {{v:dim}}; dim++) MSG(x)[dim] = DEVICEPROPERTIES(x)[dim];
 MSG(iteration) = DEVICESTATE(iteration);
-MSG(m_x)[0] = DEVICESTATE(m_x)[0];
-MSG(m_x)[1] = DEVICESTATE(m_x)[1];
-MSG(m_x)[2] = DEVICESTATE(m_x)[2];
+for (int m_dim = 0; m_dim < 3; m_dim++)
+    MSG(m_x)[m_dim] = DEVICESTATE(m_x)[m_dim];
 
 /* Set this to prevent on ReadyToSend from trying to fire another message
  * immediately after this one. */
