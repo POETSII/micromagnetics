@@ -1,9 +1,8 @@
 for (int dim = 0; dim < {{v:dim}}; dim++)
 {
-    /* Behind (and n->0 for periodicity). The first condition asks "are you
-     * directly behind?" and the second condition asks "are you really far
-     * ahead of me, so far in fact, that I suspect you're a wrap-around
-     * device?" */
+    /* Behind (and n->0 for periodicity). The first condition asks are you
+     * directly behind? and the second condition asks are you really far ahead
+     * of me, so far in fact, that I suspect you're a wrap-around device? */
     if (DEVICEPROPERTIES(x)[dim] - MSG(x)[dim] == 1 or
         MSG(x)[dim] > DEVICEPROPERTIES(x)[dim] + 1)
     {
