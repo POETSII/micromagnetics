@@ -19,8 +19,13 @@ if (DEVICESTATE(we_can_update_now) or DEVICESTATE(is_initialised) == 0)
      *
      * The check on state field "done" stops us from sending twice once we're
      * past the finish line. */
-    if (((DEVICESTATE(iteration) >> 4) << 4) == DEVICESTATE(iteration) and
-        DEVICESTATE(done) == 0)
+    bool deviceZero = true;
+    for (int x_dim = 0; x_dim < {{v:dim}}; x_dim++)
+        if (DEVICEPROPERTIES(x)[x_dim] != 0)
+            deviceZero = false;
+    if ((deviceZero and DEVICESTATE(iteration) == 1) or
+        (DEVICESTATE(done) == 0 and DEVICESTATE(iteration) >=
+         GRAPHPROPERTIES(finishLine)))
     {
         RTSSUP();
     }
