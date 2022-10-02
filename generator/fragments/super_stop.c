@@ -1,1 +1,1 @@
-if (SUPSTATE(dataFile) != 0) fclose(SUPSTATE(dataFile));
+if (SUPSTATE(dataStream).is_open()) SUPSTATE(dataStream).close();

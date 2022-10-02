@@ -1,32 +1,32 @@
+/* Start timer on first receipt */
+if (!SUPSTATE(started)) SUPSTATE(timeStart) = std::chrono::steady_clock::now();
+SUPSTATE(started) = true;
+
 /* Write exfiltrated data to file. */
 for (int dim = 0; dim < {{v:dim}};
-     fprintf(SUPSTATE(dataFile), "%u,", MSG(x)[dim++]));
-fprintf(SUPSTATE(dataFile), "%u,%f,%f,%f\n",
-        MSG(iteration), MSG(m_x)[0], MSG(m_x)[1], MSG(m_x)[2]);
+     SUPSTATE(dataStream) << MSG(x)[dim++] << ",");
+SUPSTATE(dataStream) <<
+    MSG(iteration) << "," <<
+    MSG(m_x)[0] << "," <<
+    MSG(m_x)[1] << "," <<
+    MSG(m_x)[2] << "\n";
 
 /* Has this device just crossed the finish line? If so, count it. */
 if (MSG(iteration) >= GRAPHPROPERTIES(finishLine))
 {
     SUPSTATE(nodesFinished)++;
 
-    /* Post when we're done. */
+    /* Write out time taken when we're done, and post and close. */
     if (SUPSTATE(nodesFinished) == GRAPHPROPERTIES(nodeCount))
     {
+        std::ofstream outStream;
+        outStream.open(
+            (SUPSTATE(outDir) + "/micromagnetics_timing.txt").c_str());
+        outStream << std::chrono::duration_cast<std::chrono::seconds>(
+            std::chrono::steady_clock::now() - SUPSTATE(timeStart)).count();
+        outStream << std::endl;
+        outStream.close();
         Super::post("Micromagnetic simulation complete.");
         Super::stop_application();
     }
 }
-
-/* Stop the timer, if this is the last device to cross the finish line.
-if (SUPSTATE(nodesFinished) >= GRAPHPROPERTIES(nodeCount))
-{
-    FILE* timeFile;
-    timeFile = fopen(
-        (SUPSTATE(outDir) + "/micromagnetics_end_time.txt").c_str(), "w");
-    time_t timeNtv;  /* "Native"
-    time(&timeNtv);
-    char timeBuf[sizeof "YYYY-MM-DDTHH:MM:SS"];
-    strftime(timeBuf, sizeof timeBuf, "%FT%T", localtime(&timeNtv));
-    fprintf(timeFile, "%s\n", timeBuf);
-    fclose(timeFile);
-} */
