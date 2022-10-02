@@ -7,7 +7,7 @@ with the POETS application language is assumed - if you don't have this, see
 Volume II of the Orchestrator documentation.
 
 Physics and Mathematics Definitions
----
+-
 
 This XML represents an aphysical relaxation on a helimagnetic
 material. Isotropic and Dzyaloshinskii-Moriya exchange effects are modelled, as
@@ -33,7 +33,7 @@ incorporated directly into the interaction coefficients - the comment in device
 properties explains this.
 
 Computation/Communication Trajectory
----
+-
 
 This application uses the GALS (Globally-Asynchronous, Locally-Synchronous)
 communication pattern to eliminate data shear. To kick this off, each device
