@@ -12,14 +12,15 @@ if (DEVICESTATE(we_can_update_now) or DEVICESTATE(is_initialised) == 0)
      *
      * Using one of these predicates:
      *
-     *  - if (deviceState->iteration == 1)
-     *  - if (((deviceState->iteration >> 3) << 3) == deviceState->iteration)
-     *  - if (deviceProperties->x0 == 0 && deviceProperties->x1 == 0)
-     *  - if (deviceState->iteration >= deviceProperties->finishLine)
+     *  - if (DEVICESTATE(iteration) == 1)
+     *  - if (((DEVICESTATE(iteration) >> 3) << 3) == DEVICESTATE(iteration))
+     *  - if (DEVICEPROPERTIES(x)[0] == 0 && DEVICEPROPERTIES(x)[1] == 0)
+     *  - if (DEVICESTATE(iteration) >= GRAPHPROPERTIES(finishLine))
      *
-     * The check on state field "done" stops us from sending twice. */
-    if (deviceState->iteration >= deviceProperties->finishLine &&
-        deviceState->done == 0)
+     * The check on state field "done" stops us from sending twice once we're
+     * past the finish line. */
+    if (((DEVICESTATE(iteration) >> 4) << 4) == DEVICESTATE(iteration) and
+        DEVICESTATE(done) == 0)
     {
         RTSSUP();
     }

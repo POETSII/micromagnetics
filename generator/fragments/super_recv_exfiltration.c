@@ -5,12 +5,12 @@ fprintf(SUPSTATE(dataFile), "%u,%f,%f,%f\n",
         MSG(iteration), MSG(m_x)[0], MSG(m_x)[1], MSG(m_x)[2]);
 
 /* Has this device just crossed the finish line? If so, count it. */
-if (MSG(iteration) == SUPPROPERTIES(finishLine))
+if (MSG(iteration) >= GRAPHPROPERTIES(finishLine))
 {
     SUPSTATE(nodesFinished)++;
 
     /* Post when we're done. */
-    if (SUPSTATE(nodesFinished) == SUPPROPERTIES(nodeCount))
+    if (SUPSTATE(nodesFinished) == GRAPHPROPERTIES(nodeCount))
     {
         Super::post("Micromagnetic simulation complete.");
         Super::stop_application();
@@ -18,7 +18,7 @@ if (MSG(iteration) == SUPPROPERTIES(finishLine))
 }
 
 /* Stop the timer, if this is the last device to cross the finish line.
-if (SUPSTATE(nodesFinished) >= SUPPROPERTIES(nodeCount))
+if (SUPSTATE(nodesFinished) >= GRAPHPROPERTIES(nodeCount))
 {
     FILE* timeFile;
     timeFile = fopen(

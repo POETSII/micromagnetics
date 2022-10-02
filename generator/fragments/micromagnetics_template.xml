@@ -6,6 +6,9 @@ simulation, which may have been populated.
 {{f:preamble.txt}}-->
 <Graphs xmlns="" appname="micromagnetic_simulation">
   <GraphType id="micromagnetic_simulation_type">
+    <Properties><![CDATA[
+{{f:graph_properties.c}}
+    ]]></Properties>
     <MessageTypes>
       <MessageType id="state">
         <Message><![CDATA[
@@ -58,9 +61,6 @@ simulation, which may have been populated.
         <Code><![CDATA[
 {{f:super_code.c}}
         ]]></Code>
-        <Properties><![CDATA[
-{{f:super_properties.c}}
-        ]]></Properties>
         <State><![CDATA[
 {{f:super_state.c}}
         ]]></State>

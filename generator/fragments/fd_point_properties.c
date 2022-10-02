@@ -1,9 +1,6 @@
 /* Position co-ordinate for this finite-difference cell */
 int16_t x[{{v:dim}}];
 
-/* We stop after this many iterations. */
-uint32_t finishLine = {{v:final_iteration}};
-
 /* Effective field coefficients, including the time differential and scaling
  * parameters to ease the burden on the FPU/optimiser. Currently:
  *
